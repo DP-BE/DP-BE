@@ -12,6 +12,7 @@ public class BoardDto {
 
     private Long id;
     private String nickname;
+    private String title;
     private String content;
     private Long likes;
     private Long viewCount;
@@ -22,6 +23,7 @@ public class BoardDto {
         return Board.builder()
                 .id(boardDto.getId())
                 .nickname(boardDto.getNickname())
+                .title(boardDto.getTitle())
                 .content(boardDto.getContent())
                 .likes(boardDto.getLikes())
                 .viewCount(boardDto.getViewCount())

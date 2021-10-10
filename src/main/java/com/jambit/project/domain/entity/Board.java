@@ -20,6 +20,9 @@ public class Board extends BaseEntity{
     private String nickname;
 
     @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false)
     private String content;
 
     @Column(nullable = false)
@@ -35,6 +38,7 @@ public class Board extends BaseEntity{
         return BoardDto.builder()
                 .id(board.getId())
                 .nickname(board.getNickname())
+                .title(board.getTitle())
                 .content(board.getContent())
                 .likes(board.getLikes())
                 .viewCount(board.getViewCount())

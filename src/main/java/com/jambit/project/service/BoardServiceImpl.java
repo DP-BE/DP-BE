@@ -1,6 +1,7 @@
 package com.jambit.project.service;
 
 import com.jambit.project.domain.entity.Board;
+import com.jambit.project.domain.entity.Reply;
 import com.jambit.project.domain.repository.BoardRepository;
 import com.jambit.project.dto.BoardDto;
 import lombok.RequiredArgsConstructor;
@@ -26,5 +27,31 @@ public class BoardServiceImpl implements BoardService {
         return null;
     }
 
+    @Transactional
+    public String create(BoardDto boardDto){
+        if (boardDto!=null) {
+            boardDto.setLikes(0L);
+            Board board = BoardDto.toEntity(boardDto);
+            boardRepository.save(board);
+            return board.getTitle();
+        }
+        return null;
+    }
+
+    @Transactional
+    public String modify(BoardDto boardDto){
+        Optional<Board> findModifyingBoard = boardRepository.findById(boardDto.getId());
+        if (findModifyingBoard.isPresent()) {
+            Board findBoard = findModifyingBoard.get();
+            boardRepository.save(findBoard);
+            return findBoard.getTitle();
+        }
+        return null;
+    }
+
+    @Transactional
+    public void deleteById(Long post_id){
+        boardRepository.deleteById(post_id);
+    }
 
 }
