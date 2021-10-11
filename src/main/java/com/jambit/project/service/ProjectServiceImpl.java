@@ -92,7 +92,7 @@ public class ProjectServiceImpl implements ProjectService{
     public List<String> findNicknameListByProjectId(Long projectId){
         Optional<Project> targetProject = projectRepository.findById(projectId);
         if(targetProject.isPresent()) {
-            String users = targetProject.get().getLink();
+            String users = targetProject.get().getParticipatedNickname();
             String[] userList = users.split(",");
             return Arrays.asList(userList);
         }
