@@ -3,7 +3,6 @@ package com.jambit.project.service;
 import com.jambit.project.dto.BoardDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BoardService {
     BoardDto findPost(Long post_id);
@@ -18,5 +17,5 @@ public interface BoardService {
 
     List<BoardDto> findPostListByUserNickname(String nickname);
 
-    BoardDto findPostByTitle(String title);
+    List<BoardDto> findPostByTitle(String title);
 }

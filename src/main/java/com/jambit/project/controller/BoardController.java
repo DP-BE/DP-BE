@@ -57,7 +57,7 @@ public class BoardController {
     }
 
     //모든 게시글
-    @GetMapping("/posts")
+    @GetMapping("/list")
     public ResponseEntity<List<BoardDto>> getAllPosts(){
         List<BoardDto> allPosts = boardService.findAllPosts();
         return new ResponseEntity<>(allPosts, HttpStatus.OK);
@@ -72,13 +72,8 @@ public class BoardController {
 
     //제목으로 찾기
     @GetMapping("/{title}")
-    public ResponseEntity<BoardDto> getPostByTitle(@PathVariable("title")String title){
-        BoardDto findPost = boardService.findPostByTitle(title);
-        if(findPost!=null) {
-            return new ResponseEntity<>(findPost, HttpStatus.OK);
-        }
-        else{
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<List<BoardDto>> getPostByTitle(@PathVariable("title")String title){
+        List<BoardDto> findPostList = boardService.findPostByTitle(title);
+        return new ResponseEntity<>(findPostList, HttpStatus.OK);
     }
 }

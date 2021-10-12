@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 public class BoardDto {
 
     private Long id;
-    private Long memberId;
     private Long imageId;
     private String nickname;
     private String title;
@@ -24,7 +23,6 @@ public class BoardDto {
     public static Board toEntity(BoardDto boardDto) {
         return Board.builder()
                 .id(boardDto.getId())
-                .memberId(boardDto.getMemberId())
                 .imageId(boardDto.getImageId())
                 .nickname(boardDto.getNickname())
                 .title(boardDto.getTitle())

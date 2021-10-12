@@ -30,9 +30,11 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Transactional
-    public Long createPost(BoardDto boardDto){
-        if (boardDto!=null) {
+    public Long createPost(BoardDto boardDto) {
+        if (boardDto != null) {
             boardDto.setLikes(0L);
+            boardDto.setViewCount(0L);
+            boardDto.setReplyCount(0L);
             Board board = BoardDto.toEntity(boardDto);
             boardRepository.save(board);
             return board.getId();
@@ -61,6 +63,7 @@ public class BoardServiceImpl implements BoardService {
         return false;
     }
 
+    //TODO: 페이지네이션 -> Spring data JPA를 활용하여
     @Transactional
     public List<BoardDto> findAllPosts() {
         List<Board> findPostsList = boardRepository.findAll();
@@ -72,22 +75,17 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public List<BoardDto> findPostListByUserNickname(String nickname) {
         List<Board> findPostsListByUser = boardRepository.findAllBoardListByNickname(nickname);
-        if(findPostsListByUser!=null){
-            return findPostsListByUser.stream()
-                    .map(Board::toDto)
-                    .collect(Collectors.toList());
-        }
-        return null;
+        return findPostsListByUser.stream()
+                .map(Board::toDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public BoardDto findPostByTitle(String title) {
-        Optional<Board> targetPostWrapper = boardRepository.findByTitle(title);
-        if(targetPostWrapper.isPresent()){
-            Board targetPost = targetPostWrapper.get();
-            return Board.toDto(targetPost);
-        }
-        return null;
+    public List<BoardDto> findPostByTitle(String title) {
+        List<Board> targetPostList = boardRepository.findByTitleContaining(title);
+        return targetPostList.stream()
+                .map(Board::toDto)
+                .collect(Collectors.toList());
     }
 
 }

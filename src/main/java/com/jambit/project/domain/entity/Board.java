@@ -16,13 +16,10 @@ public class Board extends BaseEntity{
     @Column(name = "post_id")
     private Long id;
 
-    @Column(nullable = false)
-    private Long memberId;
-
-    @Column(nullable = false)
+    @Column
     private Long imageId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nickname;
 
     @Column(nullable = false)
@@ -31,19 +28,18 @@ public class Board extends BaseEntity{
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
+    @Column
     private Long likes;
 
-    @Column(nullable = false)
+    @Column
     private Long viewCount;
 
-    @Column(nullable = false)
+    @Column
     private Long replyCount;
 
     public static BoardDto toDto(Board board) {
         return BoardDto.builder()
                 .id(board.getId())
-                .memberId(board.getMemberId())
                 .imageId(board.getImageId())
                 .nickname(board.getNickname())
                 .title(board.getTitle())
