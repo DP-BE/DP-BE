@@ -16,25 +16,33 @@ public class Board extends BaseEntity{
     @Column(name = "post_id")
     private Long id;
 
-    @Column(nullable = false)
+    @Column
+    private Long imageId;
+
+    @Column(nullable = false, unique = true)
     private String nickname;
+
+    @Column(nullable = false)
+    private String title;
 
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
+    @Column
     private Long likes;
 
-    @Column(nullable = false)
+    @Column
     private Long viewCount;
 
-    @Column(nullable = false)
+    @Column
     private Long replyCount;
 
     public static BoardDto toDto(Board board) {
         return BoardDto.builder()
                 .id(board.getId())
+                .imageId(board.getImageId())
                 .nickname(board.getNickname())
+                .title(board.getTitle())
                 .content(board.getContent())
                 .likes(board.getLikes())
                 .viewCount(board.getViewCount())
