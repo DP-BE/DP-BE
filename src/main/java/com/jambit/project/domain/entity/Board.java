@@ -17,6 +17,12 @@ public class Board extends BaseEntity{
     private Long id;
 
     @Column(nullable = false)
+    private Long memberId;
+
+    @Column(nullable = false)
+    private Long imageId;
+
+    @Column(nullable = false)
     private String nickname;
 
     @Column(nullable = false)
@@ -37,6 +43,8 @@ public class Board extends BaseEntity{
     public static BoardDto toDto(Board board) {
         return BoardDto.builder()
                 .id(board.getId())
+                .memberId(board.getMemberId())
+                .imageId(board.getImageId())
                 .nickname(board.getNickname())
                 .title(board.getTitle())
                 .content(board.getContent())

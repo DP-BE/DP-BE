@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/board")
@@ -19,7 +21,7 @@ public class BoardController {
 
     @GetMapping("/{post_id}")
     public ResponseEntity<BoardDto> getPost(@PathVariable("post_id") Long post_id) {
-        BoardDto findPost = boardService.getPost(post_id);
+        BoardDto findPost = boardService.findPost(post_id);
         if (findPost != null) {
             return new ResponseEntity<>(findPost, HttpStatus.OK);
         }
@@ -28,10 +30,10 @@ public class BoardController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<String> registerBoard(@RequestBody BoardDto boardDto){
-        if(boardService.create(boardDto)!=null){
-            return new ResponseEntity<>(boardDto.getTitle(), HttpStatus.OK);
+    @PostMapping("")
+    public ResponseEntity<Long> registerBoard(@RequestBody BoardDto boardDto){
+        if(boardService.createPost(boardDto)!=null){
+            return new ResponseEntity<>(boardDto.getId(), HttpStatus.OK);
         }
         else{
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
@@ -39,9 +41,9 @@ public class BoardController {
     }
 
     @PutMapping("")
-    public ResponseEntity<String> modifyBoard(@RequestBody BoardDto boardDto){
-        if(boardService.modify(boardDto)!=null){
-            return new ResponseEntity<>(boardDto.getTitle(), HttpStatus.OK);
+    public ResponseEntity<Long> modifyBoard(@RequestBody BoardDto boardDto){
+        if(boardService.modifyPost(boardDto)!=null){
+            return new ResponseEntity<>(boardDto.getId(), HttpStatus.OK);
         }
         else{
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
@@ -49,9 +51,34 @@ public class BoardController {
     }
 
     @DeleteMapping("/{post_id}")
-    public ResponseEntity<?> deleteBoard(@PathVariable("post_id") Long post_id){
-        boardService.deleteById(post_id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Boolean> deleteBoard(@PathVariable("post_id") Long post_id){
+        boolean isDeleted = boardService.deletePost(post_id);
+        return new ResponseEntity<>(isDeleted, HttpStatus.OK);
     }
 
+    //모든 게시글
+    @GetMapping("/posts")
+    public ResponseEntity<List<BoardDto>> getAllPosts(){
+        List<BoardDto> allPosts = boardService.findAllPosts();
+        return new ResponseEntity<>(allPosts, HttpStatus.OK);
+    }
+
+    //닉네임으로 찾기
+    @GetMapping("/{user_nickname}")
+    public ResponseEntity<List<BoardDto>> getUserPost(@PathVariable("user_nickname")String userNickname){
+        List<BoardDto> userPosts = boardService.findPostListByUserNickname(userNickname);
+        return new ResponseEntity<>(userPosts, HttpStatus.OK);
+    }
+
+    //제목으로 찾기
+    @GetMapping("/{title}")
+    public ResponseEntity<BoardDto> getPostByTitle(@PathVariable("title")String title){
+        BoardDto findPost = boardService.findPostByTitle(title);
+        if(findPost!=null) {
+            return new ResponseEntity<>(findPost, HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
 }
