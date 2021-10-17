@@ -6,6 +6,8 @@ import com.jambit.project.domain.repository.BoardRepository;
 import com.jambit.project.dto.BoardDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
@@ -47,6 +49,9 @@ public class BoardServiceImpl implements BoardService {
         Optional<Board> findModifyingBoard = boardRepository.findById(boardDto.getId());
         if (findModifyingBoard.isPresent()) {
             Board findBoard = findModifyingBoard.get();
+            // 수정되는 속성인 content와 title에 대한 수정 로직
+            if(boardDto.getContent() != null) findBoard.setContent(boardDto.getContent());
+            if(boardDto.getTitle() != null) findBoard.setTitle(boardDto.getTitle());
             boardRepository.save(findBoard);
             return findBoard.getId();
         }
@@ -65,11 +70,9 @@ public class BoardServiceImpl implements BoardService {
 
     //TODO: 페이지네이션 -> Spring data JPA를 활용하여
     @Transactional
-    public List<BoardDto> findAllPosts() {
-        List<Board> findPostsList = boardRepository.findAll();
-        return findPostsList.stream()
-                .map(Board::toDto)
-                .collect(Collectors.toList());
+    public Page<BoardDto> findAllPosts(Pageable pageable) {
+        Page<Board> findPostsPage = boardRepository.findAll(pageable);
+        return findPostsPage.map(Board::toDto);
     }
 
     @Transactional
