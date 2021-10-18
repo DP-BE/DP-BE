@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +47,6 @@ public class BoardController {
     @PutMapping("")
     public ResponseEntity<Long> modifyBoard(@RequestBody BoardDto boardDto){
         if(boardService.modifyPost(boardDto)!=null){
-
             return new ResponseEntity<>(boardDto.getId(), HttpStatus.OK);
         }
         else{
@@ -61,7 +62,7 @@ public class BoardController {
 
     //모든 게시글
     @GetMapping("/list")
-    public ResponseEntity<Page<BoardDto>> getAllPosts(Pageable pageable){
+    public ResponseEntity<Page<BoardDto>> getAllPosts(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
         Page<BoardDto> allPosts = boardService.findAllPosts(pageable);
         return new ResponseEntity<>(allPosts, HttpStatus.OK);
     }

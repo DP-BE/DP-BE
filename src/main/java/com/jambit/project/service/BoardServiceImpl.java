@@ -50,8 +50,7 @@ public class BoardServiceImpl implements BoardService {
         if (findModifyingBoard.isPresent()) {
             Board findBoard = findModifyingBoard.get();
             // 수정되는 속성인 content와 title에 대한 수정 로직
-            if(boardDto.getContent() != null) findBoard.setContent(boardDto.getContent());
-            if(boardDto.getTitle() != null) findBoard.setTitle(boardDto.getTitle());
+            findBoard.update(boardDto);
             boardRepository.save(findBoard);
             return findBoard.getId();
         }

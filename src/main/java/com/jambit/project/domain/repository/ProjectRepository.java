@@ -13,3 +13,4 @@ public interface ProjectRepository extends JpaRepository<Project, Long>{
     @Query("select * from Project p order by p.likes desc limit 5")
     List<Project> findProjectListOrderByLikes();
 }
+
