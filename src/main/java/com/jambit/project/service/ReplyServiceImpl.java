@@ -56,10 +56,10 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Transactional
     public String modify(ReplyDto replyDto) {
-        Optional<Reply> findModifyingReply = replyRepository.findByIdAndReferenceId(
-                replyDto.getId(), replyDto.getReferenceId());
+        Optional<Reply> findModifyingReply = replyRepository.findById(replyDto.getId());
         if (findModifyingReply.isPresent()) {
             Reply findReply = findModifyingReply.get();
+            findReply.updateContent(replyDto);
             replyRepository.save(findReply);
             return findReply.getNickname();
         }

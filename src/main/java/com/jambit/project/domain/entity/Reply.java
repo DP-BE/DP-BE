@@ -45,4 +45,8 @@ public class Reply extends BaseEntity{
                 .isDeleted(reply.getIsDeleted())
                 .build();
     }
+
+    public void updateContent(ReplyDto replyDto) {
+        this.content = replyDto.getContent();
+    }
 }
