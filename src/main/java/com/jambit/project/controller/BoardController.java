@@ -5,6 +5,10 @@ import com.jambit.project.dto.BoardDto;
 import com.jambit.project.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,8 +62,8 @@ public class BoardController {
 
     //모든 게시글
     @GetMapping("/list")
-    public ResponseEntity<List<BoardDto>> getAllPosts(){
-        List<BoardDto> allPosts = boardService.findAllPosts();
+    public ResponseEntity<Page<BoardDto>> getAllPosts(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+        Page<BoardDto> allPosts = boardService.findAllPosts(pageable);
         return new ResponseEntity<>(allPosts, HttpStatus.OK);
     }
 

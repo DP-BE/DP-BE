@@ -16,9 +16,6 @@ public class Board extends BaseEntity{
     @Column(name = "post_id")
     private Long id;
 
-    @Column
-    private Long imageId;
-
     @Column(nullable = false, unique = true)
     private String nickname;
 
@@ -37,10 +34,14 @@ public class Board extends BaseEntity{
     @Column
     private Long replyCount;
 
+    public void update(BoardDto boardDto){
+        this.title = boardDto.getTitle();
+        this.content = boardDto.getContent();
+    }
+
     public static BoardDto toDto(Board board) {
         return BoardDto.builder()
                 .id(board.getId())
-                .imageId(board.getImageId())
                 .nickname(board.getNickname())
                 .title(board.getTitle())
                 .content(board.getContent())
