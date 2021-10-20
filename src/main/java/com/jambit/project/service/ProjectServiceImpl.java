@@ -34,7 +34,7 @@ public class ProjectServiceImpl implements ProjectService{
     @Transactional
     public Long createProject(ProjectDto projectDto){   // return 값 무엇으로 할지?
         if(projectDto != null) {
-            projectDto.setLikes(0L);
+            projectDto.setLikesCount(0L);
             projectDto.setReplyCount(0L);
             projectDto.setViewCount(0L);
             Project project = ProjectDto.toEntity(projectDto);

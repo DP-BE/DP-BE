@@ -31,6 +31,9 @@ public class Board extends BaseEntity{
     @Column
     private Long replyCount;
 
+    @Column
+    private Long likesCount;
+
     public void update(BoardDto boardDto){
         this.title = boardDto.getTitle();
         this.content = boardDto.getContent();
@@ -45,6 +48,7 @@ public class Board extends BaseEntity{
                 .viewCount(board.getViewCount())
                 .replyCount(board.getReplyCount())
                 .createdDate(board.getCreatedDate())
+                .likesCount(board.getLikesCount())
                 .build();
     }
 }

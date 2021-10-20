@@ -17,6 +17,7 @@ public class BoardDto {
     private Long viewCount;
     private Long replyCount;
     private LocalDateTime createdDate;
+    private Long likesCount;
 
     public static Board toEntity(BoardDto boardDto) {
         return Board.builder()
@@ -26,6 +27,7 @@ public class BoardDto {
                 .content(boardDto.getContent())
                 .viewCount(boardDto.getViewCount())
                 .replyCount(boardDto.getReplyCount())
+                .likesCount(boardDto.getLikesCount())
                 .build();
     }
 }
