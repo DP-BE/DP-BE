@@ -34,7 +34,7 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public Long createPost(BoardDto boardDto) {
         if (boardDto != null) {
-            boardDto.setLikes(0L);
+            boardDto.setLikesCount(0L);
             boardDto.setViewCount(0L);
             boardDto.setReplyCount(0L);
             Board board = BoardDto.toEntity(boardDto);

@@ -11,11 +11,14 @@ public interface ReplyService {
 
     List<ReplyDto> findAllReferenceRepliesList(Long referenceId);
 
+    List<ReplyDto> findAllProjectRepliesList(Long projectId);
+
     Page<ReplyDto> findAllPostRepliesPage(Long postId, Pageable pageable);
 
     String create(ReplyDto replyDto);
 
     String modify(ReplyDto replyDto);
 
-    boolean deletePostReply(Long reply_id);
+    boolean deleteReply(Long reply_id);
+
 }

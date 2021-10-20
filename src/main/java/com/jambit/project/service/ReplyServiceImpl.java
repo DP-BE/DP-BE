@@ -1,6 +1,10 @@
 package com.jambit.project.service;
 
+import com.jambit.project.domain.entity.Board;
+import com.jambit.project.domain.entity.Project;
 import com.jambit.project.domain.entity.Reply;
+import com.jambit.project.domain.repository.BoardRepository;
+import com.jambit.project.domain.repository.ProjectRepository;
 import com.jambit.project.domain.repository.ReplyRepository;
 import com.jambit.project.dto.ReplyDto;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +23,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ReplyServiceImpl implements ReplyService {
     private final ReplyRepository replyRepository;
+    private final BoardRepository boardRepository;
+    private final ProjectRepository projectRepository;
 
     @Transactional
     public List<ReplyDto> findAllPostRepliesList(Long postId) {
@@ -37,6 +43,14 @@ public class ReplyServiceImpl implements ReplyService {
     }
 
     @Transactional
+    public List<ReplyDto> findAllProjectRepliesList(Long projectId) {
+        List<Reply> projectReplyList = replyRepository.findByProjectId(projectId);
+        return projectReplyList.stream()
+                .map(Reply::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
     public Page<ReplyDto> findAllPostRepliesPage(Long postId, Pageable pageable) {
         Page<Reply> findReplyList = replyRepository.findAllReplyPageByPostIdAndReferenceIdNull(postId, pageable);
         return findReplyList.map(Reply::toDTO);
@@ -49,6 +63,18 @@ public class ReplyServiceImpl implements ReplyService {
             replyDto.setIsDeleted(false);
             Reply reply = ReplyDto.toEntity(replyDto);
             replyRepository.save(reply);
+            switch (reply.getTargetType()) {
+                case POST:
+                    Optional<Board> findPost = boardRepository.findById(reply.getPostId());
+                    findPost.ifPresent(b -> b.setReplyCount(b.getReplyCount() + 1L));
+                    break;
+                case PROJECT:
+                    Optional<Project> findProject = projectRepository.findById(reply.getProjectId());
+                    findProject.ifPresent(p -> p.setReplyCount(p.getReplyCount() + 1L));
+                    break;
+                default:
+                    break;
+            }
             return reply.getNickname();
         }
         return null;
@@ -67,7 +93,7 @@ public class ReplyServiceImpl implements ReplyService {
     }
 
     @Transactional
-    public boolean deletePostReply(Long reply_id) {
+    public boolean deleteReply(Long reply_id) {
         Optional<Reply> deleteReply = replyRepository.findById(reply_id);
         if (deleteReply.isPresent()) {
             Reply reply = deleteReply.get();
@@ -75,8 +101,19 @@ public class ReplyServiceImpl implements ReplyService {
                 return false;
             }
             reply.setIsDeleted(true);
+            switch(reply.getTargetType()) {
+                case POST:
+                    Optional<Board> findPost = boardRepository.findById(reply.getPostId());
+                    findPost.ifPresent(b -> b.setReplyCount(b.getReplyCount() - 1L));
+                    break;
+                case PROJECT:
+                    Optional<Project> findProject = projectRepository.findById(reply.getProjectId());
+                    findProject.ifPresent(p -> p.setReplyCount(p.getReplyCount() - 1L));
+                    break;
+            }
             return true;
         }
         return false;
     }
+
 }

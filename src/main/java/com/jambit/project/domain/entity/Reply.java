@@ -26,10 +26,20 @@ public class Reply extends BaseEntity{
     private Long postId;
 
     @Column
+    private Long projectId;
+
+    @Column
     private Long referenceId;
 
     @Column
     private Boolean isDeleted;
+
+    @Column
+    private Long likesCount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TargetType targetType;
 
     public static ReplyDto toDTO(Reply reply){
         return ReplyDto.builder()
@@ -39,6 +49,9 @@ public class Reply extends BaseEntity{
                 .postId(reply.getPostId())
                 .referenceId(reply.getReferenceId())
                 .isDeleted(reply.getIsDeleted())
+                .likesCount(reply.getLikesCount())
+                .targetType(reply.getTargetType())
+                .projectId(reply.getProjectId())
                 .build();
     }
 }

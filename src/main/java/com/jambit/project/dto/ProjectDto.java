@@ -18,6 +18,8 @@ public class ProjectDto {
     private Long viewCount;
     private Long replyCount;
     private String techStack;
+    private Long likesCount;
+
     public static Project toEntity(ProjectDto projectDto){
         return Project.builder()
                 .id(projectDto.getId())
@@ -28,6 +30,7 @@ public class ProjectDto {
                 .viewCount(projectDto.getViewCount())
                 .replyCount(projectDto.getReplyCount())
                 .techStack(projectDto.getTechStack())
+                .likesCount(projectDto.getLikesCount())
                 .build();
     }
 

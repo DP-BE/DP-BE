@@ -33,6 +33,12 @@ public class ReplyController {
         return new ResponseEntity<>(allReferenceRepliesList.size(), HttpStatus.OK);
     }
 
+    @GetMapping("/total/project/{project_id}")
+    public ResponseEntity<Integer> countAllProjectReplies(@PathVariable("project_id") Long projectId) {
+        List<ReplyDto> allProjectRepliesList = replyService.findAllProjectRepliesList(projectId);
+        return new ResponseEntity<>(allProjectRepliesList.size(), HttpStatus.OK);
+    }
+
     @GetMapping("/post/{post_id}")
     public ResponseEntity<Page<ReplyDto>> getAllPostReplies(@PathVariable("post_id") Long postId,
                                                             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
@@ -50,6 +56,12 @@ public class ReplyController {
     public ResponseEntity<List<ReplyDto>> getAllReferenceReplies(@PathVariable("refer_id") Long refId) {
         List<ReplyDto> allReferenceRepliesPage = replyService.findAllReferenceRepliesList(refId);
         return new ResponseEntity<>(allReferenceRepliesPage, HttpStatus.OK);
+    }
+
+    @GetMapping("/project/{project_id}")
+    public ResponseEntity<List<ReplyDto>> getAllProjectReplies(@PathVariable("project_id") Long projectId) {
+        List<ReplyDto> allProjectRepliesList = replyService.findAllProjectRepliesList(projectId);
+        return new ResponseEntity<>(allProjectRepliesList, HttpStatus.OK);
     }
 
     @PostMapping("")
@@ -72,9 +84,9 @@ public class ReplyController {
         }
     }
 
-    @DeleteMapping("/post/{reply_id}")
-    public ResponseEntity<Boolean> deletePostReply(@PathVariable("reply_id") Long reply_id) {
-        boolean isDeleted = replyService.deletePostReply(reply_id);
+    @DeleteMapping("/{reply_id}")
+    public ResponseEntity<Boolean> deleteReply(@PathVariable("reply_id") Long reply_id) {
+        boolean isDeleted = replyService.deleteReply(reply_id);
         return new ResponseEntity<>(isDeleted, HttpStatus.OK);
     }
 }
