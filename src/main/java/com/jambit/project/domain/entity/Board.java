@@ -16,7 +16,7 @@ public class Board extends BaseEntity{
     @Column(name = "post_id")
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String nickname;
 
     @Column(nullable = false)
@@ -24,9 +24,6 @@ public class Board extends BaseEntity{
 
     @Column(nullable = false)
     private String content;
-
-    @Column
-    private Long likes;
 
     @Column
     private Long viewCount;
@@ -45,7 +42,6 @@ public class Board extends BaseEntity{
                 .nickname(board.getNickname())
                 .title(board.getTitle())
                 .content(board.getContent())
-                .likes(board.getLikes())
                 .viewCount(board.getViewCount())
                 .replyCount(board.getReplyCount())
                 .createdDate(board.getCreatedDate())

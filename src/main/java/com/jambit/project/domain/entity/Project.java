@@ -37,9 +37,6 @@ public class Project extends BaseEntity{
     @Column(nullable = false)
     private Long replyCount;
 
-    @Column(nullable = false)
-    private Long likes;
-
     @Column
     private String techStack;
 
@@ -52,7 +49,6 @@ public class Project extends BaseEntity{
                 .link(project.getLink())
                 .viewCount(project.getViewCount())
                 .replyCount(project.getReplyCount())
-                .likes(project.getLikes())
                 .techStack(project.getTechStack())
                 .build();
     }

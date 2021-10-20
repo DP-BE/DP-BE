@@ -29,9 +29,6 @@ public class Reply extends BaseEntity{
     private Long referenceId;
 
     @Column
-    private Long likesCount;
-
-    @Column
     private Boolean isDeleted;
 
     public static ReplyDto toDTO(Reply reply){
@@ -39,7 +36,6 @@ public class Reply extends BaseEntity{
                 .id(reply.getId())
                 .nickname(reply.getNickname())
                 .content(reply.getContent())
-                .likesCount(reply.getLikesCount())
                 .postId(reply.getPostId())
                 .referenceId(reply.getReferenceId())
                 .isDeleted(reply.getIsDeleted())

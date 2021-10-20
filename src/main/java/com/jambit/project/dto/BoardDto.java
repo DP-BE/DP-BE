@@ -14,7 +14,6 @@ public class BoardDto {
     private String nickname;
     private String title;
     private String content;
-    private Long likes;
     private Long viewCount;
     private Long replyCount;
     private LocalDateTime createdDate;
@@ -25,7 +24,6 @@ public class BoardDto {
                 .nickname(boardDto.getNickname())
                 .title(boardDto.getTitle())
                 .content(boardDto.getContent())
-                .likes(boardDto.getLikes())
                 .viewCount(boardDto.getViewCount())
                 .replyCount(boardDto.getReplyCount())
                 .build();

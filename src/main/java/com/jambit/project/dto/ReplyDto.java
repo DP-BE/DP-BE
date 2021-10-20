@@ -13,7 +13,6 @@ public class ReplyDto {
     private String content;
     private Long postId;
     private Long referenceId;
-    private Long likesCount;
     private Boolean isDeleted;
 
     public static Reply toEntity(ReplyDto replyDto) {
@@ -23,7 +22,6 @@ public class ReplyDto {
                 .content(replyDto.getContent())
                 .postId(replyDto.getPostId())
                 .referenceId(replyDto.getReferenceId())
-                .likesCount(replyDto.getLikesCount())
                 .isDeleted(replyDto.getIsDeleted())
                 .build();
     }
