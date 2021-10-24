@@ -1,14 +1,18 @@
 package com.jambit.project.controller;
 
 
+import com.jambit.project.domain.entity.TargetType;
 import com.jambit.project.domain.repository.ProjectRepository;
+import com.jambit.project.dto.BoardDto;
 import com.jambit.project.dto.ProjectDto;
+import com.jambit.project.service.ImageService;
 import com.jambit.project.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,6 +23,7 @@ import java.util.List;
 
 public class ProjectController {
     private final ProjectService projectService;
+    private final ImageService imageService;
 
     @GetMapping("/{project_id}")
     public ResponseEntity<ProjectDto> getProject(@PathVariable("project_id")Long project_id){
@@ -32,16 +37,18 @@ public class ProjectController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Long> registerProject(@RequestBody ProjectDto projectDto){
+    public ResponseEntity<Long> registerProject(@RequestParam MultipartFile file, @RequestBody ProjectDto projectDto){
         if(projectService.createProject(projectDto) != null){
+            String path = imageService.uploadImage(TargetType.PROJECT, projectDto.getId(), file);
             return new ResponseEntity<>(projectDto.getId(), HttpStatus.OK);
         }
         else return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
     }
 
     @PutMapping("")
-    public ResponseEntity<Long> reviseProject(@RequestBody ProjectDto projectDto){
+    public ResponseEntity<Long> reviseProject(@RequestParam List<MultipartFile> files, @RequestBody ProjectDto projectDto){
         if(projectService.modifyProject(projectDto) != null){
+            imageService.modifyImage(TargetType.PROJECT,projectDto.getId(),files);
             return new ResponseEntity<>(projectDto.getId(), HttpStatus.OK);
         }
         else return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
@@ -54,12 +61,12 @@ public class ProjectController {
         }
         else return new ResponseEntity<>(false, HttpStatus.FORBIDDEN);
     }
-
+/*
     @GetMapping("/{user_nickname}")
     public ResponseEntity<List<ProjectDto>> getUserProject(@PathVariable("user_nickname")String userNickname){
         List<ProjectDto> userProjects = projectService.findProjectListByUserNickname(userNickname);
         return new ResponseEntity<>(userProjects, HttpStatus.OK);
-    }
+    }*/
 
     @GetMapping("/top") // parameter 뭘로 할지?
     public ResponseEntity<List<ProjectDto>> getTopProject(){
@@ -78,4 +85,5 @@ public class ProjectController {
         List<String> nicknames = projectService.findNicknameListByProjectId(projectId);
         return new ResponseEntity<>(nicknames,HttpStatus.OK);
     }
+
 }

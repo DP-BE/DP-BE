@@ -32,7 +32,7 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
     @Transactional
-    public Long createProject(ProjectDto projectDto){   // return 값 무엇으로 할지?
+    public Long createProject(ProjectDto projectDto){
         if(projectDto != null) {
             projectDto.setLikesCount(0L);
             projectDto.setReplyCount(0L);
@@ -46,13 +46,26 @@ public class ProjectServiceImpl implements ProjectService{
 
     @Transactional
     public Long modifyProject(ProjectDto projectDto){
-        Optional<Project> targetProject = projectRepository.findById(projectDto.getId());
-        if(targetProject.isPresent()){
-            Project project = targetProject.get();
+        if(projectRepository.findById(projectDto.getId()).isPresent()){
+            Project project = updateProject(projectDto);
             projectRepository.save(project);
             return project.getId();
         }
         return null;
+    }
+
+    private Project updateProject(ProjectDto projectDto){
+        Project project = new Project();
+        project.setId(projectDto.getId());
+        project.setProjectName(projectDto.getProjectName());
+        project.setContent(projectDto.getContent());
+        project.setLink(projectDto.getLink());
+        project.setParticipatedNickname(projectDto.getParticipatedNickname());
+        project.setTechStack(projectDto.getTechStack());
+        project.setLikesCount(projectDto.getLikesCount());
+        project.setReplyCount(projectDto.getReplyCount());
+        project.setViewCount(projectDto.getViewCount());
+        return project;
     }
 
     @Transactional
@@ -64,8 +77,8 @@ public class ProjectServiceImpl implements ProjectService{
         }
         return null;
     }
-
-    @Transactional
+/*
+    @Transactional // paging
     public List<ProjectDto> findProjectListByUserNickname(String nickname){
         List<Project> findProjectList = projectRepository.findAllProjectListByNicknameLike(nickname);
 
@@ -76,7 +89,7 @@ public class ProjectServiceImpl implements ProjectService{
         }
         return null;
     }
-
+*/
     @Transactional
     public List<String> findLinkListByProjectId(Long projectId){
         Optional<Project> targetProject = projectRepository.findById(projectId);
@@ -101,7 +114,7 @@ public class ProjectServiceImpl implements ProjectService{
 
     @Transactional
     public List<ProjectDto> findTopProjects(){
-        List<Project> findProjectList = projectRepository.findProjectListOrderByLikes();
+        List<Project> findProjectList = projectRepository.findTop5ByOrderByLikesDesc();
         if(findProjectList != null){
             return findProjectList.stream()
                     .map(Project::toDto)

@@ -15,9 +15,6 @@ public interface ProjectService {
 
     Long deleteProject(Long project_id);
 
-    // 유저 이름으로 프로젝트 리스트
-    List<ProjectDto> findProjectListByUserNickname(String nickname);
-
     // 좋아요 순으로 프로젝트 리스트 5개
     List<ProjectDto> findTopProjects();
 
