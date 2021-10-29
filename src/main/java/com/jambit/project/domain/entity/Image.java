@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Getter @Setter
 @Builder
 
-public class Image {
+public class Image extends BaseEntity{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "image_id")
     private Long id;
@@ -26,15 +26,22 @@ public class Image {
     @Column(nullable = false)
     private String storedPath;
 
-/*
+    @Column(nullable = false)
+    private Long targetId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TargetType targetType;
+
     public static ImageDto toDto(Image image){
         return ImageDto.builder()
                 .id(image.getId())
                 .originFileName(image.getOriginFileName())
                 .fileName(image.getFileName())
                 .targetType(image.getTargetType())
+                .targetId(image.getTargetId())
                 .storedPath(image.getStoredPath())
                 .build();
     }
-*/
+
 }

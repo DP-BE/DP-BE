@@ -37,18 +37,16 @@ public class ProjectController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Long> registerProject(@RequestParam MultipartFile file, @RequestBody ProjectDto projectDto){
+    public ResponseEntity<Long> registerProject( @RequestBody ProjectDto projectDto){
         if(projectService.createProject(projectDto) != null){
-            String path = imageService.uploadImage(TargetType.PROJECT, projectDto.getId(), file);
             return new ResponseEntity<>(projectDto.getId(), HttpStatus.OK);
         }
         else return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
     }
 
     @PutMapping("")
-    public ResponseEntity<Long> reviseProject(@RequestParam List<MultipartFile> files, @RequestBody ProjectDto projectDto){
+    public ResponseEntity<Long> reviseProject(@RequestBody ProjectDto projectDto){
         if(projectService.modifyProject(projectDto) != null){
-            imageService.modifyImage(TargetType.PROJECT,projectDto.getId(),files);
             return new ResponseEntity<>(projectDto.getId(), HttpStatus.OK);
         }
         else return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);

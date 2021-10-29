@@ -10,6 +10,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long>{
     /*@Query("select * from Project p where p.participatedNickname Like ?1")
     List<Project> findAllProjectListByNicknameLike(String nickname);*/
 
-    List<Project> findTop5ByOrderByLikesDesc();
+    List<Project> findTop5ByOrderByLikesCountDesc();
 }
 

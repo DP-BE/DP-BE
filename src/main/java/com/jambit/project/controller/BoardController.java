@@ -39,9 +39,9 @@ public class BoardController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Long> registerBoard(@RequestParam MultipartFile file, @RequestBody BoardDto boardDto){
-        if(boardService.createPost(boardDto)!=null){
-            String path = imageService.uploadImage(TargetType.POST, boardDto.getId(), file);
+    public ResponseEntity<Long> registerBoard(@RequestPart(value = "image", required = false) List<MultipartFile> files,
+                                              @RequestPart(value = "boardDto") BoardDto boardDto) throws Exception{
+        if(boardService.createPost(boardDto, files)!=null){
             return new ResponseEntity<>(boardDto.getId(), HttpStatus.OK);
         }
         else{
@@ -50,9 +50,8 @@ public class BoardController {
     }
 
     @PutMapping("")
-    public ResponseEntity<Long> modifyBoard(@RequestParam List<MultipartFile> files, @RequestBody BoardDto boardDto){
+    public ResponseEntity<Long> modifyBoard( @RequestBody BoardDto boardDto){
         if(boardService.modifyPost(boardDto)!=null){
-            imageService.modifyImage(TargetType.POST,boardDto.getId(),files);
             return new ResponseEntity<>(boardDto.getId(), HttpStatus.OK);
         }
         else{

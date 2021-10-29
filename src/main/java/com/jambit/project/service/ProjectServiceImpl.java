@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-
 public class ProjectServiceImpl implements ProjectService{
 
     private final ProjectRepository projectRepository;
@@ -114,7 +113,7 @@ public class ProjectServiceImpl implements ProjectService{
 
     @Transactional
     public List<ProjectDto> findTopProjects(){
-        List<Project> findProjectList = projectRepository.findTop5ByOrderByLikesDesc();
+        List<Project> findProjectList = projectRepository.findTop5ByOrderByLikesCountDesc();
         if(findProjectList != null){
             return findProjectList.stream()
                     .map(Project::toDto)
