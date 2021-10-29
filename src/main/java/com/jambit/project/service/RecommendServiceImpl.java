@@ -73,32 +73,12 @@ public class RecommendServiceImpl implements RecommendService {
     }
 
     public Integer countRecommendByType(Long refId, TargetType targetType) {
-        switch(targetType) {
-            case POST:
-                List<Recommend> byPostId = recommendRepository.findByPostId(refId);
-                return byPostId.size();
-            case REPLY:
-                List<Recommend> byReplyId = recommendRepository.findByReplyId(refId);
-                return byReplyId.size();
-            case PROJECT:
-                List<Recommend> byProjectId = recommendRepository.findByProjectId(refId);
-                return byProjectId.size();
-        }
-        return null;
+        List<Recommend> recommendList = recommendRepository.findByRefIdTargetTypeIs(refId, targetType);
+        return recommendList.size();
     }
 
     public Boolean getRecommendByTypeAndUser(Long refId, TargetType targetType, String nickname) {
-        switch(targetType) {
-            case POST:
-                Optional<Recommend> isRecommendedOnPost = recommendRepository.findByPostIdAndNicknameAndIsDeletedFalse(refId, nickname);
-                return isRecommendedOnPost.isPresent();
-            case REPLY:
-                Optional<Recommend> isRecommendedOnReply = recommendRepository.findByReplyIdAndNicknameAndIsDeletedFalse(refId, nickname);
-                return isRecommendedOnReply.isPresent();
-            case PROJECT:
-                Optional<Recommend> isRecommendedOnProject = recommendRepository.findByProjectIdAndNicknameAndIsDeletedFalse(refId, nickname);
-                return isRecommendedOnProject.isPresent();
-        }
-        return false;
+        Optional<Recommend> recommendList = recommendRepository.findTop1ByRefIdAndNicknameAndTargetTypeIsAndIsDeletedFalse(refId, nickname, targetType);
+        return recommendList.isPresent();
     }
 }
