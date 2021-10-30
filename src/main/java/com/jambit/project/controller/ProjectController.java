@@ -37,8 +37,9 @@ public class ProjectController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Long> registerProject( @RequestBody ProjectDto projectDto){
-        if(projectService.createProject(projectDto) != null){
+    public ResponseEntity<Long> registerProject( @RequestPart(value = "image", required = false) List<MultipartFile> files,
+                                                 @RequestPart(value = "projectDto") ProjectDto projectDto) throws Exception{
+        if(projectService.createProject(projectDto, files) != null){
             return new ResponseEntity<>(projectDto.getId(), HttpStatus.OK);
         }
         else return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);

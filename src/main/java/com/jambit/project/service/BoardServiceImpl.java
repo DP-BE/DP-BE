@@ -48,6 +48,8 @@ public class BoardServiceImpl implements BoardService {
             boardDto.setReplyCount(0L);
             Board board = BoardDto.toEntity(boardDto);
 
+            boardRepository.save(board);
+
             List<Image> imageList = fileHandler.parseFileInfo(board.getId(), TargetType.POST, files);
 
             if(!imageList.isEmpty()){
@@ -55,8 +57,6 @@ public class BoardServiceImpl implements BoardService {
                     imageRepository.save(image);
                 }
             }
-
-            boardRepository.save(board);
             return board.getId();
         }
         return null;
