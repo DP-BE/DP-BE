@@ -5,6 +5,7 @@ import com.jambit.project.domain.entity.Project;
 import com.jambit.project.domain.entity.TargetType;
 import com.jambit.project.domain.repository.ImageRepository;
 import com.jambit.project.domain.repository.ProjectRepository;
+import com.jambit.project.dto.ImageDto;
 import com.jambit.project.dto.ProjectDto;
 import com.jambit.project.utility.FileHandler;
 import lombok.RequiredArgsConstructor;
@@ -47,10 +48,11 @@ public class ProjectServiceImpl implements ProjectService{
             Project project = ProjectDto.toEntity(projectDto);
             projectRepository.save(project);
 
-            List<Image> imageList = fileHandler.parseFileInfo(project.getId(), TargetType.PROJECT, files);
+            List<ImageDto> imageList = fileHandler.parseFileInfo(project.getId(), TargetType.PROJECT, files);
 
             if(!imageList.isEmpty()){
-                for(Image image : imageList){
+                for(ImageDto imageDto : imageList){
+                    Image image = ImageDto.toEntity(imageDto);
                     imageRepository.save(image);
                 }
             }

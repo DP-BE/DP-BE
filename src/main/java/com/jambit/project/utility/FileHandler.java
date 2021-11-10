@@ -27,8 +27,8 @@ import java.util.UUID;
 @Slf4j
 public class FileHandler {
 
-    public List<Image> parseFileInfo(Long targetId, TargetType targetType, List<MultipartFile> multipartFiles) throws Exception {
-        List<Image> fileList = new ArrayList<>();
+    public List<ImageDto> parseFileInfo(Long targetId, TargetType targetType, List<MultipartFile> multipartFiles) throws Exception {
+        List<ImageDto> fileList = new ArrayList<>();
 
         if(!CollectionUtils.isEmpty(multipartFiles)) {
             LocalDateTime now = LocalDateTime.now();
@@ -74,9 +74,7 @@ public class FileHandler {
                         .targetType(targetType)
                         .build();
 
-                Image image = ImageDto.toEntity(imageDto);
-
-                fileList.add(image);
+                fileList.add(imageDto);
 
                 file = new File(absolutePath + path + File.separator + filename);
                 multipartFile.transferTo(file);

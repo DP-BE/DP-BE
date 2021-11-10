@@ -7,6 +7,7 @@ import com.jambit.project.domain.entity.TargetType;
 import com.jambit.project.domain.repository.BoardRepository;
 import com.jambit.project.domain.repository.ImageRepository;
 import com.jambit.project.dto.BoardDto;
+import com.jambit.project.dto.ImageDto;
 import com.jambit.project.utility.FileHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,10 +51,11 @@ public class BoardServiceImpl implements BoardService {
 
             boardRepository.save(board);
 
-            List<Image> imageList = fileHandler.parseFileInfo(board.getId(), TargetType.POST, files);
+            List<ImageDto> imageList = fileHandler.parseFileInfo(board.getId(), TargetType.POST, files);
 
             if(!imageList.isEmpty()){
-                for(Image image : imageList){
+                for(ImageDto imageDto : imageList){
+                    Image image = ImageDto.toEntity(imageDto);
                     imageRepository.save(image);
                 }
             }

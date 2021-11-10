@@ -7,11 +7,15 @@ import com.jambit.project.service.BoardService;
 import com.jambit.project.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @RestController
@@ -35,13 +39,23 @@ public class ImageController {
      */
 
     @GetMapping("/image")
-    public ResponseEntity<List<Image>> getImage(@RequestParam TargetType targetType,
+    public ResponseEntity<List<ImageDto>> getImage(@RequestParam TargetType targetType,
                                                 @RequestParam Long targetId){
-        List<Image> images = imageService.getImage(targetType, targetId);
+        List<ImageDto> images = imageService.getImage(targetType, targetId);
         if(images != null){
             return new ResponseEntity<>(images,HttpStatus.OK);
         }
         else return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+    }
+
+
+    @GetMapping(
+            value = "/get-image-with-media-type",
+            produces = MediaType.IMAGE_JPEG_VALUE
+    )
+    public @ResponseBody byte[] getImageWithMediaType(@RequestParam String path) throws IOException {
+        InputStream in = getClass().getResourceAsStream(path);
+        return IOUtils.toByteArray(in);
     }
 
 }
