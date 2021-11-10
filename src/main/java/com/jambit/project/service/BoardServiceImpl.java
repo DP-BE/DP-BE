@@ -1,14 +1,21 @@
 package com.jambit.project.service;
 
 import com.jambit.project.domain.entity.Board;
+import com.jambit.project.domain.entity.Image;
 import com.jambit.project.domain.entity.Reply;
+import com.jambit.project.domain.entity.TargetType;
 import com.jambit.project.domain.repository.BoardRepository;
+import com.jambit.project.domain.repository.ImageRepository;
 import com.jambit.project.dto.BoardDto;
+import com.jambit.project.dto.ImageDto;
+import com.jambit.project.utility.FileHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +26,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class BoardServiceImpl implements BoardService {
+
     private final BoardRepository boardRepository;
+    private final ImageRepository imageRepository;
+    private final FileHandler fileHandler;
 
     @Transactional
     public BoardDto findPost(Long post_id) {
@@ -32,13 +42,23 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Transactional
-    public Long createPost(BoardDto boardDto) {
+    public Long createPost(BoardDto boardDto, List<MultipartFile> files) throws Exception {
         if (boardDto != null) {
             boardDto.setLikesCount(0L);
             boardDto.setViewCount(0L);
             boardDto.setReplyCount(0L);
             Board board = BoardDto.toEntity(boardDto);
+
             boardRepository.save(board);
+
+            List<ImageDto> imageList = fileHandler.parseFileInfo(board.getId(), TargetType.POST, files);
+
+            if(!imageList.isEmpty()){
+                for(ImageDto imageDto : imageList){
+                    Image image = ImageDto.toEntity(imageDto);
+                    imageRepository.save(image);
+                }
+            }
             return board.getId();
         }
         return null;

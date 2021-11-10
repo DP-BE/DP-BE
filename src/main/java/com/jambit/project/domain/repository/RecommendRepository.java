@@ -8,6 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RecommendRepository extends JpaRepository<Recommend, Long> {
-    List<Recommend> findByRefIdTargetTypeIs(Long refId, TargetType targetType);
-    Optional<Recommend> findTop1ByRefIdAndNicknameAndTargetTypeIsAndIsDeletedFalse(Long refId, String nickname, TargetType targetType);
+    List<Recommend> findByRefIdAndTargetType(Long refId, TargetType targetType);
+    Optional<Recommend> findTop1ByRefIdAndNicknameAndTargetTypeAndIsDeletedFalse(Long refId, String nickname, TargetType targetType);
 }

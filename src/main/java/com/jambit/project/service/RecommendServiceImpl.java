@@ -73,12 +73,12 @@ public class RecommendServiceImpl implements RecommendService {
     }
 
     public Integer countRecommendByType(Long refId, TargetType targetType) {
-        List<Recommend> recommendList = recommendRepository.findByRefIdTargetTypeIs(refId, targetType);
+        List<Recommend> recommendList = recommendRepository.findByRefIdAndTargetType(refId, targetType);
         return recommendList.size();
     }
 
     public Boolean getRecommendByTypeAndUser(Long refId, TargetType targetType, String nickname) {
-        Optional<Recommend> recommendList = recommendRepository.findTop1ByRefIdAndNicknameAndTargetTypeIsAndIsDeletedFalse(refId, nickname, targetType);
+        Optional<Recommend> recommendList = recommendRepository.findTop1ByRefIdAndNicknameAndTargetTypeAndIsDeletedFalse(refId, nickname, targetType);
         return recommendList.isPresent();
     }
 }

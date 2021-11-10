@@ -1,8 +1,10 @@
 package com.jambit.project.controller;
 
 import com.jambit.project.domain.entity.Board;
+import com.jambit.project.domain.entity.TargetType;
 import com.jambit.project.dto.BoardDto;
 import com.jambit.project.service.BoardService;
+import com.jambit.project.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -12,6 +14,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,6 +25,7 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final ImageService imageService;
 
     @GetMapping("/{post_id}")
     public ResponseEntity<BoardDto> getPost(@PathVariable("post_id") Long post_id) {
@@ -35,8 +39,9 @@ public class BoardController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Long> registerBoard(@RequestBody BoardDto boardDto){
-        if(boardService.createPost(boardDto)!=null){
+    public ResponseEntity<Long> registerBoard(@RequestPart(value = "image", required = false) List<MultipartFile> files,
+                                              @RequestPart(value = "boardDto") BoardDto boardDto) throws Exception{
+        if(boardService.createPost(boardDto, files)!=null){
             return new ResponseEntity<>(boardDto.getId(), HttpStatus.OK);
         }
         else{
@@ -45,7 +50,7 @@ public class BoardController {
     }
 
     @PutMapping("")
-    public ResponseEntity<Long> modifyBoard(@RequestBody BoardDto boardDto){
+    public ResponseEntity<Long> modifyBoard( @RequestBody BoardDto boardDto){
         if(boardService.modifyPost(boardDto)!=null){
             return new ResponseEntity<>(boardDto.getId(), HttpStatus.OK);
         }
