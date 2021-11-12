@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -51,11 +53,13 @@ public class ImageController {
 
     @GetMapping(
             value = "/get-image-with-media-type",
-            produces = MediaType.IMAGE_JPEG_VALUE
+            produces = MediaType.IMAGE_PNG_VALUE
     )
-    public @ResponseBody byte[] getImageWithMediaType(@RequestParam String path) throws IOException {
-        InputStream in = getClass().getResourceAsStream(path);
-        return IOUtils.toByteArray(in);
+    public @ResponseBody byte[] getImageWithMediaType(@RequestParam String file) throws IOException {
+        InputStream imageStream = new FileInputStream("C:\\Users\\gyuman\\Desktop\\학교\\spring\\DP-BE\\images" + File.separator+file);
+//        InputStream in = getClass().getResourceAsStream(file);
+
+        return IOUtils.toByteArray(imageStream);
     }
 
 }
