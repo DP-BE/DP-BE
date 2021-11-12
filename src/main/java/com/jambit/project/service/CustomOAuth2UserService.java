@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
 import java.util.Collections;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -58,5 +59,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                     .orElse(attributes.toEntityOfGithub());
             return memberRepository.save(member);
         }
+    }
+
+    public Member findMemberByName(String name) {
+        Optional<Member> byNickname = memberRepository.findByNickname(name);
+        return byNickname.orElse(null);
     }
 }
