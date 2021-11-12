@@ -27,10 +27,10 @@ import java.util.UUID;
 @Slf4j
 public class FileHandler {
 
-    public List<ImageDto> parseFileInfo(Long targetId, TargetType targetType, List<MultipartFile> multipartFiles) throws Exception {
+    public List<ImageDto> parseFileInfo(Long targetId, TargetType targetType, MultipartFile[] multipartFiles) throws Exception {
         List<ImageDto> fileList = new ArrayList<>();
 
-        if(!CollectionUtils.isEmpty(multipartFiles)) {
+        if(multipartFiles.length != 0) {
             LocalDateTime now = LocalDateTime.now();
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
             String current_date = now.format(dateTimeFormatter);

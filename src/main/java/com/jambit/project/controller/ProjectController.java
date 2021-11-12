@@ -37,10 +37,11 @@ public class ProjectController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Long> registerProject( @RequestPart(value = "image", required = false) List<MultipartFile> files,
-                                                 @RequestPart(value = "projectDto") ProjectDto projectDto) throws Exception{
-        if(projectService.createProject(projectDto, files) != null){
-            return new ResponseEntity<>(projectDto.getId(), HttpStatus.OK);
+    public ResponseEntity<Long> registerProject( @RequestPart(value = "image", required = false) MultipartFile[] files,
+                                                 @RequestPart(value = "projectDto") String projectDto) throws Exception{
+        Long projectId = projectService.createProject(projectDto, files);
+        if(projectId != null){
+            return new ResponseEntity<>(projectId, HttpStatus.OK);
         }
         else return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
     }

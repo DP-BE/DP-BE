@@ -1,5 +1,6 @@
 package com.jambit.project.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jambit.project.domain.entity.Board;
 import com.jambit.project.domain.entity.Image;
 import com.jambit.project.domain.entity.Reply;
@@ -42,12 +43,13 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Transactional
-    public Long createPost(BoardDto boardDto, List<MultipartFile> files) throws Exception {
+    public Long createPost(String boardDto, MultipartFile[] files) throws Exception {
         if (boardDto != null) {
-            boardDto.setLikesCount(0L);
-            boardDto.setViewCount(0L);
-            boardDto.setReplyCount(0L);
-            Board board = BoardDto.toEntity(boardDto);
+            BoardDto boardDto1 = new ObjectMapper().readValue(boardDto, BoardDto.class);
+            boardDto1.setLikesCount(0L);
+            boardDto1.setViewCount(0L);
+            boardDto1.setReplyCount(0L);
+            Board board = BoardDto.toEntity(boardDto1);
 
             boardRepository.save(board);
 

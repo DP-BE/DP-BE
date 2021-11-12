@@ -1,14 +1,18 @@
 package com.jambit.project.dto;
 
 import com.jambit.project.domain.entity.Project;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProjectDto {
     private Long id;
     private String participatedNickname;

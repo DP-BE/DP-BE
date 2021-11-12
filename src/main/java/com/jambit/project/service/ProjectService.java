@@ -10,7 +10,7 @@ import java.util.List;
 public interface ProjectService {
     ProjectDto getProject(Long project_id);
 
-    Long createProject(ProjectDto projectDto, List<MultipartFile> files) throws Exception;
+    Long createProject(String projectDto, MultipartFile[] files) throws Exception;
 
     Long modifyProject(ProjectDto projectDto);
 

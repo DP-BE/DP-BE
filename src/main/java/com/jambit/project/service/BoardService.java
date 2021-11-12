@@ -10,7 +10,7 @@ import java.util.List;
 public interface BoardService {
     BoardDto findPost(Long post_id);
 
-    Long createPost(BoardDto boardDto, List<MultipartFile> files) throws Exception;
+    Long createPost(String boardDto, MultipartFile[] files) throws Exception;
 
     Long modifyPost(BoardDto boardDto);
 

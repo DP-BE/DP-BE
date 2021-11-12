@@ -1,5 +1,6 @@
 package com.jambit.project.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jambit.project.domain.entity.Image;
 import com.jambit.project.domain.entity.Project;
 import com.jambit.project.domain.entity.TargetType;
@@ -40,20 +41,23 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
     @Transactional
-    public Long createProject(ProjectDto projectDto, List<MultipartFile> files) throws Exception {
+    public Long createProject(String projectDto, MultipartFile[] files) throws Exception {
         if(projectDto != null) {
-            projectDto.setLikesCount(0L);
-            projectDto.setReplyCount(0L);
-            projectDto.setViewCount(0L);
-            Project project = ProjectDto.toEntity(projectDto);
+            ProjectDto projectDto1 = new ObjectMapper().readValue(projectDto, ProjectDto.class);
+            projectDto1.setLikesCount(0L);
+            projectDto1.setReplyCount(0L);
+            projectDto1.setViewCount(0L);
+            Project project = ProjectDto.toEntity(projectDto1);
             projectRepository.save(project);
 
-            List<ImageDto> imageList = fileHandler.parseFileInfo(project.getId(), TargetType.PROJECT, files);
+            if(files != null) {
+                List<ImageDto> imageList = fileHandler.parseFileInfo(project.getId(), TargetType.PROJECT, files);
 
-            if(!imageList.isEmpty()){
-                for(ImageDto imageDto : imageList){
-                    Image image = ImageDto.toEntity(imageDto);
-                    imageRepository.save(image);
+                if (!imageList.isEmpty()) {
+                    for (ImageDto imageDto : imageList) {
+                        Image image = ImageDto.toEntity(imageDto);
+                        imageRepository.save(image);
+                    }
                 }
             }
             return project.getId();

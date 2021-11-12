@@ -1,16 +1,34 @@
 package com.jambit.project.controller;
 
-import com.jambit.project.domain.entity.TargetType;
-import com.jambit.project.dto.BoardDto;
-import org.springframework.http.HttpStatus;
+import com.jambit.project.dto.MemberDto;
+import com.jambit.project.service.MemberService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.*;
 
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/member")
+@Slf4j
 public class MemberController {
-    /*
-    TODO :: Image 받아오기
-     */
+//
+//    private final MemberService memberService;
+//
+//    @GetMapping("/{nickname}")
+//    public ResponseEntity<MemberDto> getMember(@PathVariable("nickname") String nickname) {
+//        return null;
+//    }
+//
+//    // 추가정보 받을 때
+//    @PutMapping("")
+//    public ResponseEntity<Long> modify(@RequestBody MemberDto memberDto) {
+//        return null;
+//    }
+//
+//    @DeleteMapping("/{member_id}")
+//    public ResponseEntity<Boolean> delete(@PathVariable("member_id") Long memberId) {
+//        return null;
+//    }
+
 }

@@ -39,10 +39,11 @@ public class BoardController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Long> registerBoard(@RequestPart(value = "image", required = false) List<MultipartFile> files,
-                                              @RequestPart(value = "boardDto") BoardDto boardDto) throws Exception{
-        if(boardService.createPost(boardDto, files)!=null){
-            return new ResponseEntity<>(boardDto.getId(), HttpStatus.OK);
+    public ResponseEntity<Long> registerBoard(@RequestPart(value = "image", required = false) MultipartFile[] files,
+                                              @RequestPart(value = "boardDto") String boardDto) throws Exception{
+        Long postId = boardService.createPost(boardDto, files);
+        if(postId != null){
+            return new ResponseEntity<>(postId, HttpStatus.OK);
         }
         else{
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
