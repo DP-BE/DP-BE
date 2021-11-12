@@ -76,7 +76,7 @@ public class FileHandler {
 
                 fileList.add(imageDto);
 
-                file = new File(absolutePath + path + File.separator + filename);
+                file = new File(absolutePath+path + File.separator + filename);
                 multipartFile.transferTo(file);
 
                 file.setWritable(true);
