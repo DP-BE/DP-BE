@@ -41,8 +41,8 @@ public class ProjectController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<Page<ProjectDto>> getAllProjects(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
-        Page<ProjectDto> allProjects = projectService.findAllProjects(pageable);
+    public ResponseEntity<List<ProjectDto>> getAllProjects(){
+        List<ProjectDto> allProjects = projectService.findAllProjects();
         return new ResponseEntity<>(allProjects, HttpStatus.OK);
     }
 

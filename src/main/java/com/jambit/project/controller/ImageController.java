@@ -56,7 +56,7 @@ public class ImageController {
             produces = MediaType.IMAGE_PNG_VALUE
     )
     public @ResponseBody byte[] getImageWithMediaType(@RequestParam String file) throws IOException {
-        InputStream imageStream = new FileInputStream("\\images" + File.separator+file);
+        InputStream imageStream = new FileInputStream("images" + File.separator+file);
 //        InputStream in = getClass().getResourceAsStream(file);
 
         return IOUtils.toByteArray(imageStream);

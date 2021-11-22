@@ -43,9 +43,11 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
     @Transactional
-    public Page<ProjectDto> findAllProjects(Pageable pageable) {
-        Page<Project> findProjectsPage = projectRepository.findAll(pageable);
-        return findProjectsPage.map(Project::toDto);
+    public List<ProjectDto> findAllProjects() {
+        List<Project> findProjectsList = projectRepository.findAll();
+        return findProjectsList.stream()
+                .map(Project::toDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional
