@@ -10,6 +10,8 @@ import java.util.List;
 public interface ProjectService {
     ProjectDto getProject(Long project_id);
 
+    Page<ProjectDto> findAllProjects(Pageable pageable);
+
     Long createProject(String projectDto, MultipartFile[] files) throws Exception;
 
     Long modifyProject(ProjectDto projectDto);
