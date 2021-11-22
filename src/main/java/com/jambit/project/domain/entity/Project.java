@@ -58,7 +58,7 @@ public class Project extends BaseEntity{
                 .replyCount(project.getReplyCount())
                 .techStack(project.getTechStack())
                 .likesCount(project.getLikesCount())
-                .progressType(project.getProgress())
+                .progress(project.getProgress())
                 .build();
     }
 
