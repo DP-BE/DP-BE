@@ -1,5 +1,6 @@
 package com.jambit.project.dto;
 
+import com.jambit.project.domain.entity.ProgressType;
 import com.jambit.project.domain.entity.Project;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +24,7 @@ public class ProjectDto {
     private Long replyCount;
     private String techStack;
     private Long likesCount;
+    private ProgressType progress;
 
     public static Project toEntity(ProjectDto projectDto){
         return Project.builder()
@@ -35,6 +37,7 @@ public class ProjectDto {
                 .replyCount(projectDto.getReplyCount())
                 .techStack(projectDto.getTechStack())
                 .likesCount(projectDto.getLikesCount())
+                .progress(projectDto.getProgress())
                 .build();
     }
 

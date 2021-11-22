@@ -43,6 +43,10 @@ public class Project extends BaseEntity{
     @Column
     private String techStack;
 
+    @Enumerated(EnumType.STRING)
+    @Column
+    private ProgressType progress;
+
     public static ProjectDto toDto(Project project){
         return ProjectDto.builder()
                 .id(project.getId())
@@ -54,6 +58,7 @@ public class Project extends BaseEntity{
                 .replyCount(project.getReplyCount())
                 .techStack(project.getTechStack())
                 .likesCount(project.getLikesCount())
+                .progressType(project.getProgress())
                 .build();
     }
 
