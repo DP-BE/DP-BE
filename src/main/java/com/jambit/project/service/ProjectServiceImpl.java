@@ -1,11 +1,13 @@
 package com.jambit.project.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jambit.project.domain.entity.Board;
 import com.jambit.project.domain.entity.Image;
 import com.jambit.project.domain.entity.Project;
 import com.jambit.project.domain.entity.TargetType;
 import com.jambit.project.domain.repository.ImageRepository;
 import com.jambit.project.domain.repository.ProjectRepository;
+import com.jambit.project.dto.BoardDto;
 import com.jambit.project.dto.ImageDto;
 import com.jambit.project.dto.ProjectDto;
 import com.jambit.project.utility.FileHandler;
@@ -38,6 +40,12 @@ public class ProjectServiceImpl implements ProjectService{
             return Project.toDto(findProject);
         }
         return null;
+    }
+
+    @Transactional
+    public Page<ProjectDto> findAllProjects(Pageable pageable) {
+        Page<Project> findProjectsPage = projectRepository.findAll(pageable);
+        return findProjectsPage.map(Project::toDto);
     }
 
     @Transactional

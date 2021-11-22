@@ -34,9 +34,13 @@ public class Board extends BaseEntity{
     @Column
     private Long likesCount;
 
+    @Column
+    private Boolean isPublic;
+
     public void update(BoardDto boardDto){
         this.title = boardDto.getTitle();
         this.content = boardDto.getContent();
+
     }
 
     public static BoardDto toDto(Board board) {
@@ -49,6 +53,7 @@ public class Board extends BaseEntity{
                 .replyCount(board.getReplyCount())
                 .createdDate(board.getCreatedDate())
                 .likesCount(board.getLikesCount())
+                .isPublic(board.getIsPublic())
                 .build();
     }
 }
