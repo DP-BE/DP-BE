@@ -41,7 +41,7 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
             accessTokenCookie.setMaxAge(60 * 60 * 24);
             response.addCookie(accessTokenCookie);
             try {
-                //response.sendRedirect("http://localhost:3000");
+                response.sendRedirect("http://localhost:3000");
             } catch (Exception e) {
                 e.printStackTrace();
             }

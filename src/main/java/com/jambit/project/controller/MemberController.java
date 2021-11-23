@@ -30,5 +30,4 @@ public class MemberController {
 //    public ResponseEntity<Boolean> delete(@PathVariable("member_id") Long memberId) {
 //        return null;
 //    }
-
 }
