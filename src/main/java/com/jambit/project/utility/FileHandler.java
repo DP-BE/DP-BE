@@ -37,7 +37,7 @@ public class FileHandler {
 
             String absolutePath = new File("").getAbsolutePath() + File.separator;
 
-            String path = "images" + File.separator;
+            String path = "images";
             File file = new File(path);
 
             if(!file.exists()){
@@ -76,7 +76,7 @@ public class FileHandler {
 
                 fileList.add(imageDto);
 
-                file = new File(absolutePath+path + File.separator + filename);
+                file = new File(absolutePath + path + File.separator + filename);
                 multipartFile.transferTo(file);
 
                 file.setWritable(true);

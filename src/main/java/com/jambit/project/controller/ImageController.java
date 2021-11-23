@@ -22,25 +22,13 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin // 다른 origin으로부터의 요청이 차단되는 오류를 해결하기 위함
+@RequestMapping("/image")
 @Slf4j
 public class ImageController {
-    private ImageService imageService;
+    private final ImageService imageService;
+    private final String ABSOLUTE_PATH = "/home/ec2-user";
 
-    /*
-    @PostMapping("/upload") // 매핑 어떻게 할 것인지?
-    public ResponseEntity<String> registerImage(@RequestParam TargetType targetType,
-                                                @RequestParam Long targetId,
-                                                @RequestParam MultipartFile file){
-        String path = imageService.uploadImage(targetType, targetId, file);
-        if(path != null){
-            return new ResponseEntity<>(path, HttpStatus.OK);
-        }
-        else return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
-    }
-     */
-
-    @GetMapping("/image")
+    @GetMapping("")
     public ResponseEntity<List<ImageDto>> getImage(@RequestParam TargetType targetType,
                                                 @RequestParam Long targetId){
         List<ImageDto> images = imageService.getImage(targetType, targetId);
@@ -50,15 +38,12 @@ public class ImageController {
         else return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
     }
 
-
     @GetMapping(
             value = "/get-image-with-media-type",
-            produces = MediaType.IMAGE_PNG_VALUE
+            produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE}
     )
-    public @ResponseBody byte[] getImageWithMediaType(@RequestParam String file) throws IOException {
-        InputStream imageStream = new FileInputStream("images" + File.separator+file);
-//        InputStream in = getClass().getResourceAsStream(file);
-
+    public @ResponseBody byte[] getImageWithMediaType(@RequestParam String fileName) throws IOException {
+        InputStream imageStream = new FileInputStream(ABSOLUTE_PATH + "/images" + File.separator + fileName);
         return IOUtils.toByteArray(imageStream);
     }
 
