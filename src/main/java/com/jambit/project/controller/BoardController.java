@@ -25,7 +25,6 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
-    private final ImageService imageService;
 
     @GetMapping("/{post_id}")
     public ResponseEntity<BoardDto> getPost(@PathVariable("post_id") Long post_id) {
@@ -36,6 +35,18 @@ public class BoardController {
         else {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping("/me/{nickname}")
+    public ResponseEntity<List<BoardDto>> getMyPostList(@PathVariable("nickname") String nickname) {
+        List<BoardDto> postList = boardService.findPostList(nickname);
+        return new ResponseEntity<>(postList, HttpStatus.OK);
+    }
+
+    @GetMapping("/favorite/{nickname}")
+    public ResponseEntity<List<BoardDto>> getFavoritePostList(@PathVariable("nickname") String nickname) {
+        List<BoardDto> likedPostList = boardService.findLikedPostList(nickname);
+        return new ResponseEntity<>(likedPostList, HttpStatus.OK);
     }
 
     @PostMapping("")

@@ -10,4 +10,6 @@ public interface SkillSetService {
     void delete(Long skill_id);
 
     List<SkillSetDto> findAllSkillSetList();
+
+    List<SkillSetDto> findSkillSetWithName(String skillName);
 }

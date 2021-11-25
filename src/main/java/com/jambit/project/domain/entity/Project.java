@@ -23,13 +23,19 @@ public class Project extends BaseEntity{
     private String participatedNickname;
 
     @Column(nullable = false)
+    private String projectManager;
+
+    @Column(nullable = false)
     private String projectName;
 
     @Column(nullable = false)
     private String content;
 
     @Column
-    private String link;
+    private String githubLink;
+
+    @Column
+    private String projectLink;
 
     @Column
     private Long viewCount;
@@ -53,12 +59,14 @@ public class Project extends BaseEntity{
                 .participatedNickname(project.getParticipatedNickname())
                 .projectName(project.getProjectName())
                 .content(project.getContent())
-                .link(project.getLink())
+                .githubLink(project.getGithubLink())
+                .projectLink(project.getProjectLink())
                 .viewCount(project.getViewCount())
                 .replyCount(project.getReplyCount())
                 .techStack(project.getTechStack())
                 .likesCount(project.getLikesCount())
                 .progress(project.getProgress())
+                .projectManager(project.getProjectManager())
                 .build();
     }
 

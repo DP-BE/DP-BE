@@ -21,33 +21,27 @@ public class Member extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String nickname;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
+    @Column
+    private String description;
 
     @Column
-    private String picture;
+    private String skillSet;
 
     public static MemberDto toDto(Member member) {
         return MemberDto.builder()
                 .id(member.getId())
                 .userId(member.getUserId())
                 .nickname(member.getNickname())
+                .description(member.getDescription())
+                .skillSet(member.getSkillSet())
                 .build();
     }
 
-    public String getRoleKey() {
-        return this.role.getKey();
+    public void update(MemberDto memberDto) {
+        this.nickname = memberDto.getNickname();
+        this.userId = memberDto.getUserId();
+        this.description = memberDto.getDescription();
+        this.skillSet = memberDto.getSkillSet();
     }
 
-    public Member updateGoogle(String name, String picture) {
-        this.nickname = name;
-        this.picture = picture;
-        return this;
-    }
-
-    public Member updateGithub(String name) {
-        this.userId = name;
-        return this;
-    }
 }

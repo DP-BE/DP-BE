@@ -20,10 +20,18 @@ public class SkillSetController {
 
     private final SkillSetService skillSetService;
 
-    @GetMapping("/list")
+    // 모든 기술스택을 불러옴
+    @GetMapping("/all")
     public ResponseEntity<List<SkillSetDto>> getAllProject(){
         List<SkillSetDto> skillSets = skillSetService.findAllSkillSetList();
         return new ResponseEntity<>(skillSets, HttpStatus.OK);
+    }
+
+    // 기술스택 이름이 포함된 기술들을 찾아줌
+    @GetMapping("/list")
+    public ResponseEntity<List<SkillSetDto>> getProjectWithName(@RequestParam("skillName") String skillName) {
+        List<SkillSetDto> skillSetWithName = skillSetService.findSkillSetWithName(skillName);
+        return new ResponseEntity<>(skillSetWithName, HttpStatus.OK);
     }
 
     @PostMapping("")

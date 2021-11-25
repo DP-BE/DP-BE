@@ -1,12 +1,10 @@
 package com.jambit.project.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jambit.project.domain.entity.Board;
-import com.jambit.project.domain.entity.Image;
-import com.jambit.project.domain.entity.Reply;
-import com.jambit.project.domain.entity.TargetType;
+import com.jambit.project.domain.entity.*;
 import com.jambit.project.domain.repository.BoardRepository;
 import com.jambit.project.domain.repository.ImageRepository;
+import com.jambit.project.domain.repository.RecommendRepository;
 import com.jambit.project.dto.BoardDto;
 import com.jambit.project.dto.ImageDto;
 import com.jambit.project.utility.FileHandler;
@@ -18,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,6 +29,7 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
     private final ImageRepository imageRepository;
+    private final RecommendRepository recommendRepository;
     private final FileHandler fileHandler;
 
     @Transactional
@@ -40,6 +40,26 @@ public class BoardServiceImpl implements BoardService {
             return Board.toDto(findPost);
         }
         return null;
+    }
+
+    @Transactional
+    public List<BoardDto> findPostList(String nickname) {
+        List<Board> byNickname = boardRepository.findByNickname(nickname);
+        return byNickname.stream().map(Board::toDto).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<BoardDto> findLikedPostList(String nickname) {
+        List<BoardDto> boardDtoList = new ArrayList<>();
+        List<Long> idList = recommendRepository.findByTargetTypeAndNickname(TargetType.POST, nickname).stream().map(Recommend::getRefId).collect(Collectors.toList());
+        idList.forEach(id -> {
+            Optional<Board> byId = boardRepository.findById(id);
+            byId.ifPresent(post -> {
+                BoardDto boardDto = Board.toDto(post);
+                boardDtoList.add(boardDto);
+            });
+        });
+        return boardDtoList;
     }
 
     @Transactional

@@ -10,6 +10,10 @@ import java.util.List;
 public interface BoardService {
     BoardDto findPost(Long post_id);
 
+    List<BoardDto> findPostList(String nickname);
+
+    List<BoardDto> findLikedPostList(String nickname);
+
     Long createPost(String boardDto, MultipartFile[] files) throws Exception;
 
     Long modifyPost(BoardDto boardDto);

@@ -37,4 +37,10 @@ public class SkillSetServiceImpl implements SkillSetService{
         List<SkillSet> allSkill = skillSetRepository.findAll();
         return allSkill.stream().map(SkillSet::toDto).collect(Collectors.toList());
     }
+
+    @Transactional
+    public List<SkillSetDto> findSkillSetWithName(String skillName) {
+        List<SkillSet> bySkillNameContaining = skillSetRepository.findBySkillNameContaining(skillName);
+        return bySkillNameContaining.stream().map(SkillSet::toDto).collect(Collectors.toList());
+    }
 }

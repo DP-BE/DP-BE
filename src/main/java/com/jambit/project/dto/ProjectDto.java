@@ -17,14 +17,18 @@ import java.util.List;
 public class ProjectDto {
     private Long id;
     private String participatedNickname;
+    private String projectManager;
     private String projectName;
     private String content;
-    private String link;
+    private String githubLink;
+    private String projectLink;
     private Long viewCount;
     private Long replyCount;
     private String techStack;
     private Long likesCount;
     private ProgressType progress;
+
+    private List<String> imgList;
 
     public static Project toEntity(ProjectDto projectDto){
         return Project.builder()
@@ -32,12 +36,14 @@ public class ProjectDto {
                 .participatedNickname(projectDto.getParticipatedNickname())
                 .projectName(projectDto.getProjectName())
                 .content(projectDto.getContent())
-                .link(projectDto.getLink())
+                .githubLink(projectDto.getGithubLink())
+                .projectLink(projectDto.getProjectLink())
                 .viewCount(projectDto.getViewCount())
                 .replyCount(projectDto.getReplyCount())
                 .techStack(projectDto.getTechStack())
                 .likesCount(projectDto.getLikesCount())
                 .progress(projectDto.getProgress())
+                .projectManager(projectDto.getProjectManager())
                 .build();
     }
 

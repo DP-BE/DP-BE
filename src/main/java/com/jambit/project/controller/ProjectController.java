@@ -4,7 +4,9 @@ package com.jambit.project.controller;
 import com.jambit.project.domain.entity.TargetType;
 import com.jambit.project.domain.repository.ProjectRepository;
 import com.jambit.project.dto.BoardDto;
+import com.jambit.project.dto.MemberDto;
 import com.jambit.project.dto.ProjectDto;
+import com.jambit.project.dto.SkillSetDto;
 import com.jambit.project.service.ImageService;
 import com.jambit.project.service.ProjectService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,6 @@ import java.util.List;
 
 public class ProjectController {
     private final ProjectService projectService;
-    private final ImageService imageService;
 
     @GetMapping("/{project_id}")
     public ResponseEntity<ProjectDto> getProject(@PathVariable("project_id")Long project_id){
@@ -40,12 +41,7 @@ public class ProjectController {
         }
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<List<ProjectDto>> getAllProjects(){
-        List<ProjectDto> allProjects = projectService.findAllProjects();
-        return new ResponseEntity<>(allProjects, HttpStatus.OK);
-    }
-
+    // 프로젝트 등록
     @PostMapping("")
     public ResponseEntity<Long> registerProject( @RequestPart(value = "image", required = false) MultipartFile[] files,
                                                  @RequestPart(value = "projectDto") String projectDto) throws Exception{
@@ -56,6 +52,7 @@ public class ProjectController {
         else return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
     }
 
+    // 프로젝트 수정
     @PutMapping("")
     public ResponseEntity<Long> reviseProject(@RequestBody ProjectDto projectDto){
         if(projectService.modifyProject(projectDto) != null){
@@ -64,6 +61,7 @@ public class ProjectController {
         else return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
     }
 
+    // 프로젝트 삭제
     @DeleteMapping("/{project_id}")
     public ResponseEntity<Boolean> deleteProject(@PathVariable("project_id")Long projectId){
         if(projectService.deleteProject(projectId) != null){
@@ -71,29 +69,31 @@ public class ProjectController {
         }
         else return new ResponseEntity<>(false, HttpStatus.FORBIDDEN);
     }
-/*
-    @GetMapping("/{user_nickname}")
-    public ResponseEntity<List<ProjectDto>> getUserProject(@PathVariable("user_nickname")String userNickname){
-        List<ProjectDto> userProjects = projectService.findProjectListByUserNickname(userNickname);
-        return new ResponseEntity<>(userProjects, HttpStatus.OK);
-    }*/
 
-    @GetMapping("/top") // parameter 뭘로 할지?
+    @GetMapping("/top")
     public ResponseEntity<List<ProjectDto>> getTopProject(){
         List<ProjectDto> topProjects = projectService.findTopProjects();
         return new ResponseEntity<>(topProjects,HttpStatus.OK);
     }
 
-    @GetMapping("/link/{project_id}")
-    public ResponseEntity<List<String>> getLink(@PathVariable("project_id") Long projectId){
-        List<String> links = projectService.findLinkListByProjectId(projectId);
-        return new ResponseEntity<>(links,HttpStatus.OK);
+    // 프로젝트에 참여하는 멤버를 불러옴
+    @GetMapping("/member/{project_id}")
+    public ResponseEntity<List<MemberDto>> getParticipateMember(@PathVariable("project_id") Long projectId) {
+        List<MemberDto> participatedMember = projectService.findParticipatedMember(projectId);
+        return new ResponseEntity<>(participatedMember, HttpStatus.OK);
     }
 
-    @GetMapping("/nickname/{project_id}")
-    public ResponseEntity<List<String>> getNickname(@PathVariable("project_id") Long projectId){
-        List<String> nicknames = projectService.findNicknameListByProjectId(projectId);
-        return new ResponseEntity<>(nicknames,HttpStatus.OK);
+    // 프로젝트 디테일 페이지에서 기술스택을 불러옴
+    @GetMapping("/skill/{project_id}")
+    public ResponseEntity<List<SkillSetDto>> getSkillSetForProject(@PathVariable("project_id") Long projectId) {
+        List<SkillSetDto> projectSkillSet = projectService.findProjectSkillSet(projectId);
+        return new ResponseEntity<>(projectSkillSet, HttpStatus.OK);
+    }
+
+    @GetMapping("/favorite/{nickname}")
+    public ResponseEntity<List<ProjectDto>> getFavoriteProject(@PathVariable("nickname") String nickname) {
+        List<ProjectDto> likedProjectList = projectService.findLikedProjectList(nickname);
+        return new ResponseEntity<>(likedProjectList, HttpStatus.OK);
     }
 
 }
