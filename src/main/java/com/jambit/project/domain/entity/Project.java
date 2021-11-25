@@ -23,6 +23,9 @@ public class Project extends BaseEntity{
     private String participatedNickname;
 
     @Column(nullable = false)
+    private String projectManager;
+
+    @Column(nullable = false)
     private String projectName;
 
     @Column(nullable = false)
@@ -59,6 +62,7 @@ public class Project extends BaseEntity{
                 .techStack(project.getTechStack())
                 .likesCount(project.getLikesCount())
                 .progress(project.getProgress())
+                .projectManager(project.getProjectManager())
                 .build();
     }
 

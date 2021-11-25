@@ -4,6 +4,7 @@ package com.jambit.project.controller;
 import com.jambit.project.domain.entity.TargetType;
 import com.jambit.project.domain.repository.ProjectRepository;
 import com.jambit.project.dto.BoardDto;
+import com.jambit.project.dto.MemberDto;
 import com.jambit.project.dto.ProjectDto;
 import com.jambit.project.service.ImageService;
 import com.jambit.project.service.ProjectService;
@@ -71,12 +72,6 @@ public class ProjectController {
         }
         else return new ResponseEntity<>(false, HttpStatus.FORBIDDEN);
     }
-/*
-    @GetMapping("/{user_nickname}")
-    public ResponseEntity<List<ProjectDto>> getUserProject(@PathVariable("user_nickname")String userNickname){
-        List<ProjectDto> userProjects = projectService.findProjectListByUserNickname(userNickname);
-        return new ResponseEntity<>(userProjects, HttpStatus.OK);
-    }*/
 
     @GetMapping("/top") // parameter 뭘로 할지?
     public ResponseEntity<List<ProjectDto>> getTopProject(){
@@ -90,10 +85,10 @@ public class ProjectController {
         return new ResponseEntity<>(links,HttpStatus.OK);
     }
 
-    @GetMapping("/nickname/{project_id}")
-    public ResponseEntity<List<String>> getNickname(@PathVariable("project_id") Long projectId){
-        List<String> nicknames = projectService.findNicknameListByProjectId(projectId);
-        return new ResponseEntity<>(nicknames,HttpStatus.OK);
+    @GetMapping("/member/{project_id}")
+    public ResponseEntity<List<MemberDto>> getParticipateMember(@PathVariable("project_id") Long projectId) {
+        List<MemberDto> participatedMember = projectService.findParticipatedMember(projectId);
+        return new ResponseEntity<>(participatedMember, HttpStatus.OK);
     }
 
 }

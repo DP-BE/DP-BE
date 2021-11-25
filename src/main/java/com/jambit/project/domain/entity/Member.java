@@ -28,11 +28,19 @@ public class Member extends BaseEntity {
     @Column
     private String picture;
 
+    @Column
+    private String description;
+
+    @Column
+    private String skillSet;
+
     public static MemberDto toDto(Member member) {
         return MemberDto.builder()
                 .id(member.getId())
                 .userId(member.getUserId())
                 .nickname(member.getNickname())
+                .description(member.getDescription())
+                .skillSet(member.getSkillSet())
                 .build();
     }
 
@@ -50,4 +58,10 @@ public class Member extends BaseEntity {
         this.userId = name;
         return this;
     }
+
+    public void update(MemberDto memberDto) {
+        this.description = memberDto.getDescription();
+        this.skillSet = memberDto.getSkillSet();
+    }
+
 }

@@ -1,15 +1,9 @@
 package com.jambit.project.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jambit.project.domain.entity.Board;
-import com.jambit.project.domain.entity.Image;
-import com.jambit.project.domain.entity.Project;
-import com.jambit.project.domain.entity.TargetType;
-import com.jambit.project.domain.repository.ImageRepository;
-import com.jambit.project.domain.repository.ProjectRepository;
-import com.jambit.project.dto.BoardDto;
-import com.jambit.project.dto.ImageDto;
-import com.jambit.project.dto.ProjectDto;
+import com.jambit.project.domain.entity.*;
+import com.jambit.project.domain.repository.*;
+import com.jambit.project.dto.*;
 import com.jambit.project.utility.FileHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,9 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,8 +24,13 @@ public class ProjectServiceImpl implements ProjectService{
     private final ProjectRepository projectRepository;
     private final FileHandler fileHandler;
     private final ImageRepository imageRepository;
+    private final ProjectParticipateRepository participateRepository;
+    private final MemberRepository memberRepository;
+    private final SkillResolveRepository skillResolveRepository;
+    private final SkillSetRepository skillSetRepository;
+
     @Transactional
-    public ProjectDto getProject(Long project_id){
+    public ProjectDto getProject(Long project_id) {
         Optional<Project> findProjectWrapper = projectRepository.findById(project_id);
         if(findProjectWrapper.isPresent()){
             Project findProject = findProjectWrapper.get();
@@ -51,6 +48,36 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
     @Transactional
+    public List<MemberDto> findParticipatedMember(Long projectId) {
+        List<MemberDto> memberList = new ArrayList<>();
+        List<ProjectParticipate> participateList = participateRepository.findByProjectId(projectId);
+        List<Long> memberIdList = participateList.stream().map(ProjectParticipate::getMemberId).collect(Collectors.toList());
+        memberIdList.forEach(memberId -> {
+            Optional<Member> findMember = memberRepository.findById(memberId);
+            findMember.ifPresent(member -> {
+                MemberDto memberDto = Member.toDto(member);
+                memberList.add(memberDto);
+            });
+        });
+        return memberList;
+    }
+
+    @Transactional
+    public List<SkillSetDto> findProjectSkillSet(Long projectId) {
+        List<SkillSetDto> skillSetList = new ArrayList<>();
+        List<SkillResolve> byProjectId = skillResolveRepository.findByProjectId(projectId);
+        List<Long> skillIdList = byProjectId.stream().map(SkillResolve::getSkillId).collect(Collectors.toList());
+        skillIdList.forEach(skillId -> {
+            Optional<SkillSet> findSkill = skillSetRepository.findById(skillId);
+            findSkill.ifPresent(skill -> {
+                SkillSetDto skillSetDto = SkillSet.toDto(skill);
+                skillSetList.add(skillSetDto);
+            });
+        });
+        return skillSetList;
+    }
+
+    @Transactional
     public Long createProject(String projectDto, MultipartFile[] files) throws Exception {
         if(projectDto != null) {
             ProjectDto projectDto1 = new ObjectMapper().readValue(projectDto, ProjectDto.class);
@@ -59,6 +86,27 @@ public class ProjectServiceImpl implements ProjectService{
             projectDto1.setViewCount(0L);
             Project project = ProjectDto.toEntity(projectDto1);
             projectRepository.save(project);
+            String participatedIds = projectDto1.getParticipatedNickname();
+            StringTokenizer stringTokenizer = new StringTokenizer(participatedIds, "#");
+            while (stringTokenizer.hasMoreTokens()) {
+                String memberId = stringTokenizer.nextToken();
+                ProjectParticipate participate = ProjectParticipate.builder()
+                        .projectId(project.getId())
+                        .memberId(Long.valueOf(memberId))
+                        .build();
+                participateRepository.save(participate);
+            }
+
+            String techStack = projectDto1.getTechStack();
+            stringTokenizer = new StringTokenizer(techStack, "#");
+            while (stringTokenizer.hasMoreTokens()) {
+                String skillId = stringTokenizer.nextToken();
+                SkillResolve skillResolve = SkillResolve.builder()
+                        .projectId(project.getId())
+                        .skillId(Long.valueOf(skillId))
+                        .build();
+                skillResolveRepository.save(skillResolve);
+            }
 
             if(files != null) {
                 List<ImageDto> imageList = fileHandler.parseFileInfo(project.getId(), TargetType.PROJECT, files);
@@ -108,49 +156,27 @@ public class ProjectServiceImpl implements ProjectService{
         }
         return null;
     }
-/*
-    @Transactional // paging
-    public List<ProjectDto> findProjectListByUserNickname(String nickname){
-        List<Project> findProjectList = projectRepository.findAllProjectListByNicknameLike(nickname);
 
-        if(findProjectList != null) {
-            return findProjectList.stream()
-                    .map(Project::toDto)
-                    .collect(Collectors.toList());
-        }
-        return null;
-    }
-*/
     @Transactional
     public List<String> findLinkListByProjectId(Long projectId){
         Optional<Project> targetProject = projectRepository.findById(projectId);
+        List<String> linkList = new ArrayList<>();
         if(targetProject.isPresent()) {
             String links = targetProject.get().getLink();
-            String[] linkList = links.split(",");
-            return Arrays.asList(linkList);
+            StringTokenizer stringTokenizer = new StringTokenizer(links, ",");
+            while (stringTokenizer.hasMoreTokens()) {
+                String link = stringTokenizer.nextToken();
+                linkList.add(link);
+            }
         }
-        return null;
-    }
-
-    @Transactional
-    public List<String> findNicknameListByProjectId(Long projectId){
-        Optional<Project> targetProject = projectRepository.findById(projectId);
-        if(targetProject.isPresent()) {
-            String users = targetProject.get().getParticipatedNickname();
-            String[] userList = users.split(",");
-            return Arrays.asList(userList);
-        }
-        return null;
+        return linkList;
     }
 
     @Transactional
     public List<ProjectDto> findTopProjects(){
         List<Project> findProjectList = projectRepository.findTop5ByOrderByLikesCountDesc();
-        if(findProjectList != null){
-            return findProjectList.stream()
+        return findProjectList.stream()
                     .map(Project::toDto)
                     .collect(Collectors.toList());
-        }
-        return null;
     }
 }

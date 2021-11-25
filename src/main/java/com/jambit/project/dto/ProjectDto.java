@@ -17,6 +17,7 @@ import java.util.List;
 public class ProjectDto {
     private Long id;
     private String participatedNickname;
+    private String projectManager;
     private String projectName;
     private String content;
     private String link;
@@ -38,6 +39,7 @@ public class ProjectDto {
                 .techStack(projectDto.getTechStack())
                 .likesCount(projectDto.getLikesCount())
                 .progress(projectDto.getProgress())
+                .projectManager(projectDto.getProjectManager())
                 .build();
     }
 

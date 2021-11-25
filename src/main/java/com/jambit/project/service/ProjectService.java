@@ -1,5 +1,6 @@
 package com.jambit.project.service;
 
+import com.jambit.project.dto.MemberDto;
 import com.jambit.project.dto.ProjectDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,13 +19,12 @@ public interface ProjectService {
 
     Long deleteProject(Long project_id);
 
+    List<MemberDto> findParticipatedMember(Long projectId);
+
     // 좋아요 순으로 프로젝트 리스트 5개
     List<ProjectDto> findTopProjects();
 
     // 프로젝트 링크 출력
     List<String> findLinkListByProjectId(Long projectId);
-
-    // 사람 출력
-    List<String> findNicknameListByProjectId(Long projectId);
 
 }
