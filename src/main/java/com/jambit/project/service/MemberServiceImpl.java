@@ -8,6 +8,8 @@ import com.jambit.project.dto.RegisterSkillDto;
 import com.jambit.project.dto.SkillSetDto;
 import com.jambit.project.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +40,12 @@ public class MemberServiceImpl implements MemberService {
     public MemberDto findMemberByUserId(String userId) {
         Optional<Member> byUserId = memberRepository.findByUserId(userId);
         return byUserId.map(Member::toDto).orElse(null);
+    }
+
+    @Transactional
+    public Page<MemberDto> getRecommendMember(Pageable pageable) {
+        Page<Member> recommendedMember = memberRepository.findAllByOrderByProjectCntDesc(pageable);
+        return recommendedMember.map(Member::toDto);
     }
 
     @Transactional
@@ -99,6 +107,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public Long createMember(MemberDto memberDto) {
         if (memberDto != null) {
+            memberDto.setProjectCnt(0L);
             Member member = MemberDto.toEntity(memberDto);
             memberRepository.save(member);
             return member.getId();
