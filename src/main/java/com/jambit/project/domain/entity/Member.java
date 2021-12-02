@@ -27,6 +27,9 @@ public class Member extends BaseEntity {
     @Column
     private String skillSet;
 
+    @Column
+    private Long projectCount;
+
     public static MemberDto toDto(Member member) {
         return MemberDto.builder()
                 .id(member.getId())
@@ -34,6 +37,7 @@ public class Member extends BaseEntity {
                 .nickname(member.getNickname())
                 .description(member.getDescription())
                 .skillSet(member.getSkillSet())
+                .projectCount(member.getProjectCount())
                 .build();
     }
 

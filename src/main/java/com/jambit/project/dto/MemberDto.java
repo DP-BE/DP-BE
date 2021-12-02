@@ -12,6 +12,7 @@ public class MemberDto {
     private String nickname;
     private String description;
     private String skillSet;
+    private Long projectCount;
 
     public static Member toEntity(MemberDto memberDto){
         return Member.builder()
@@ -20,6 +21,7 @@ public class MemberDto {
                 .nickname(memberDto.getNickname())
                 .description(memberDto.getDescription())
                 .skillSet(memberDto.getSkillSet())
+                .projectCount(memberDto.getProjectCount())
                 .build();
     }
 

@@ -125,6 +125,7 @@ public class ProjectServiceImpl implements ProjectService{
                         .memberId(Long.valueOf(memberId))
                         .build();
                 participateRepository.save(participate);
+                memberRepository.incProjectCount(Long.valueOf(memberId));
             }
 
             String techStack = projectDto1.getTechStack();
@@ -182,6 +183,13 @@ public class ProjectServiceImpl implements ProjectService{
     public Long deleteProject(Long project_id){
         Optional<Project> targetProject = projectRepository.findById(project_id);
         if(targetProject.isPresent()){
+            List<ProjectParticipate> participateList = participateRepository.findByProjectId(project_id);
+            List<Image> imageList = imageRepository.findAllImageListByTargetIdAndTargetType(project_id, TargetType.PROJECT);
+            participateList.forEach(participate -> {
+                memberRepository.decProjectCount(participate.getMemberId());
+                participateRepository.delete(participate);
+            });
+            imageRepository.deleteAll(imageList);
             projectRepository.deleteById(project_id);
             return project_id;
         }
