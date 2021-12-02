@@ -9,11 +9,7 @@ import java.util.List;
 public interface ReplyService {
     List<ReplyDto> findAllPostRepliesList(Long postId);
 
-    List<ReplyDto> findAllReferenceRepliesList(Long referenceId);
-
     List<ReplyDto> findAllProjectRepliesList(Long projectId);
-
-    Page<ReplyDto> findAllPostRepliesPage(Long postId, Pageable pageable);
 
     String create(ReplyDto replyDto);
 

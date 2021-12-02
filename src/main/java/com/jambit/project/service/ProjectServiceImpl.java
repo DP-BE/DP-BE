@@ -80,7 +80,7 @@ public class ProjectServiceImpl implements ProjectService{
     @Transactional
     public List<MemberDto> findParticipatedMember(Long projectId) {
         List<MemberDto> memberList = new ArrayList<>();
-        List<ProjectParticipate> participateList = participateRepository.findByProjectId(projectId);
+        List<ProjectParticipate> participateList = participateRepository.findByProjectIdAndIsDeletedFalse(projectId);
         List<Long> memberIdList = participateList.stream().map(ProjectParticipate::getMemberId).collect(Collectors.toList());
         memberIdList.forEach(memberId -> {
             Optional<Member> findMember = memberRepository.findById(memberId);
@@ -95,7 +95,7 @@ public class ProjectServiceImpl implements ProjectService{
     @Transactional
     public List<SkillSetDto> findProjectSkillSet(Long projectId) {
         List<SkillSetDto> skillSetList = new ArrayList<>();
-        List<SkillResolve> byProjectId = skillResolveRepository.findByProjectId(projectId);
+        List<SkillResolve> byProjectId = skillResolveRepository.findByProjectIdAndIsDeletedFalse(projectId);
         List<Long> skillIdList = byProjectId.stream().map(SkillResolve::getSkillId).collect(Collectors.toList());
         skillIdList.forEach(skillId -> {
             Optional<SkillSet> findSkill = skillSetRepository.findById(skillId);
@@ -135,6 +135,7 @@ public class ProjectServiceImpl implements ProjectService{
                 SkillResolve skillResolve = SkillResolve.builder()
                         .projectId(project.getId())
                         .skillId(Long.valueOf(skillId))
+                        .isDeleted(false)
                         .build();
                 skillResolveRepository.save(skillResolve);
             }
@@ -156,9 +157,38 @@ public class ProjectServiceImpl implements ProjectService{
 
     @Transactional
     public Long modifyProject(ProjectDto projectDto){
-        if(projectRepository.findById(projectDto.getId()).isPresent()){
+        if(projectRepository.findById(projectDto.getId()).isPresent()) {
+            List<SkillResolve> byProjectId = skillResolveRepository.findByProjectId(projectDto.getId());
+            byProjectId.forEach(skill -> {
+                if (!skill.getIsDeleted()) {
+                    skill.setIsDeleted(true);
+                }
+            });
+            List<ProjectParticipate> byProjectId1 = participateRepository.findByProjectId(projectDto.getId());
+            byProjectId1.forEach(member -> {
+                if (!member.getIsDeleted()) {
+                    member.setIsDeleted(true);
+                }
+            });
             Project project = updateProject(projectDto);
-            projectRepository.save(project);
+
+            StringTokenizer stringTokenizer = new StringTokenizer(projectDto.getTechStack(), "#");
+            while (stringTokenizer.hasMoreTokens()) {
+                Long skillId = Long.valueOf(stringTokenizer.nextToken());
+                skillResolveRepository.save(SkillResolve.builder()
+                        .skillId(skillId)
+                        .projectId(projectDto.getId())
+                        .build());
+            }
+
+            stringTokenizer = new StringTokenizer(projectDto.getParticipatedNickname(), "#");
+            while (stringTokenizer.hasMoreTokens()) {
+                Long memberId = Long.valueOf(stringTokenizer.nextToken());
+                participateRepository.save(ProjectParticipate.builder()
+                        .projectId(projectDto.getId())
+                        .memberId(memberId)
+                        .build());
+            }
             return project.getId();
         }
         return null;

@@ -48,6 +48,12 @@ public class MemberController {
         return new ResponseEntity<>(findMember, HttpStatus.OK);
     }
 
+    @GetMapping("/duplicate/{nickname}")
+    public ResponseEntity<Boolean> isDuplicateNickname(@PathVariable("nickname") String nickname) {
+        Boolean isDuplicated = memberService.checkDuplicateNickname(nickname);
+        return new ResponseEntity<>(isDuplicated, HttpStatus.OK);
+    }
+
     @GetMapping("/project/{member_id}")
     public ResponseEntity<List<ProjectDto>> getMyProject(@PathVariable("member_id") Long memberId) {
         List<ProjectDto> myProjectList = memberService.getMyProjectList(memberId);

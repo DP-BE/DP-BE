@@ -35,25 +35,11 @@ public class ReplyServiceImpl implements ReplyService {
     }
 
     @Transactional
-    public List<ReplyDto> findAllReferenceRepliesList(Long referenceId) {
-        List<Reply> referenceReplyList = replyRepository.findByReferenceId(referenceId);
-        return referenceReplyList.stream()
-                .map(Reply::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
     public List<ReplyDto> findAllProjectRepliesList(Long projectId) {
         List<Reply> projectReplyList = replyRepository.findByProjectId(projectId);
         return projectReplyList.stream()
                 .map(Reply::toDTO)
                 .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public Page<ReplyDto> findAllPostRepliesPage(Long postId, Pageable pageable) {
-        Page<Reply> findReplyList = replyRepository.findAllReplyPageByPostIdAndReferenceIdNull(postId, pageable);
-        return findReplyList.map(Reply::toDTO);
     }
 
     @Transactional
@@ -82,10 +68,10 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Transactional
     public String modify(ReplyDto replyDto) {
-        Optional<Reply> findModifyingReply = replyRepository.findByIdAndReferenceId(
-                replyDto.getId(), replyDto.getReferenceId());
+        Optional<Reply> findModifyingReply = replyRepository.findById(replyDto.getId());
         if (findModifyingReply.isPresent()) {
             Reply findReply = findModifyingReply.get();
+            findReply.setContent(replyDto.getContent());
             replyRepository.save(findReply);
             return findReply.getNickname();
         }

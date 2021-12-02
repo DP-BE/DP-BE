@@ -21,4 +21,5 @@ public interface MemberService {
     String generateToken(String nickname);
     MemberDto findMemberByUserId(String userId);
     Page<MemberDto> getRecommendMember(Pageable pageable);
+    Boolean checkDuplicateNickname(String nickname);
 }

@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface ProjectRepository extends JpaRepository<Project, Long>{
     List<Project> findTop5ByOrderByLikesCountDesc();
+    List<Project> findByProjectManager(String nickname);
 }
 

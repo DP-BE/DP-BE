@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +34,20 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public MemberDto findMember(String nickname) {
         Optional<Member> findMember = memberRepository.findByNickname(nickname);
-        return findMember.map(Member::toDto).orElse(null);
+        MemberDto memberDto = findMember.map(Member::toDto).orElse(null);
+        if (memberDto != null) {
+            List<String> newSkillList = new ArrayList<>();
+            StringTokenizer stringTokenizer = new StringTokenizer(memberDto.getSkillSet(), "#");
+            while (stringTokenizer.hasMoreTokens()) {
+                Long skillId = Long.valueOf(stringTokenizer.nextToken());
+                Optional<SkillSet> findSkill = skillSetRepository.findById(skillId);
+                findSkill.ifPresent(f -> {
+                    newSkillList.add(f.getSkillName());
+                });
+            }
+            memberDto.setSkillList(newSkillList);
+        }
+        return memberDto;
     }
 
     @Transactional
@@ -43,9 +57,27 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Transactional
+    public Boolean checkDuplicateNickname(String nickname) {
+        Optional<Member> byNickname = memberRepository.findByNickname(nickname);
+        return byNickname.isPresent();
+    }
+
+    @Transactional
     public Page<MemberDto> getRecommendMember(Pageable pageable) {
         Page<Member> recommendedMember = memberRepository.findAllByOrderByProjectCntDesc(pageable);
-        return recommendedMember.map(Member::toDto);
+        Page<MemberDto> memberDto = recommendedMember.map(Member::toDto);
+        return memberDto.map(m -> {
+            String techStack = m.getSkillSet();
+            StringTokenizer stringTokenizer = new StringTokenizer(techStack, "#");
+            List<String> newSkillList = new ArrayList<>();
+            while (stringTokenizer.hasMoreTokens()) {
+                Long skillId = Long.valueOf(stringTokenizer.nextToken());
+                Optional<SkillSet> findSkill = skillSetRepository.findById(skillId);
+                findSkill.ifPresent(f -> newSkillList.add(f.getSkillName()));
+            }
+            m.setSkillList(newSkillList);
+            return m;
+        });
     }
 
     @Transactional
@@ -83,7 +115,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public List<SkillSetDto> getMemberSkillSet(Long memberId) {
         List<SkillSetDto> skillList = new ArrayList<>();
-        List<SkillResolve> byMemberId = skillResolveRepository.findByMemberId(memberId);
+        List<SkillResolve> byMemberId = skillResolveRepository.findByMemberIdAndIsDeletedFalse(memberId);
         List<Long> skillIdList = byMemberId.stream().map(SkillResolve::getSkillId).collect(Collectors.toList());
         skillIdList.forEach(skillId -> {
             Optional<SkillSet> findSkill = skillSetRepository.findById(skillId);
@@ -118,17 +150,22 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public Boolean registerSkill(RegisterSkillDto skillDto) {
         Optional<Member> findMember = memberRepository.findById(skillDto.getMemberId());
-        List<Long> skillIdList = skillResolveRepository.findByMemberId(skillDto.getMemberId()).stream().map(SkillResolve::getSkillId).collect(Collectors.toList());
+        List<SkillResolve> byMemberId = skillResolveRepository.findByMemberId(skillDto.getMemberId());
+        byMemberId.forEach(s -> {
+            if (!s.getIsDeleted()) {
+                s.setIsDeleted(true);
+            }
+        });
+
         if (findMember.isPresent()) {
             StringTokenizer stringTokenizer = new StringTokenizer(skillDto.getSkill(), "#");
             while (stringTokenizer.hasMoreTokens()) {
                 String skillId = stringTokenizer.nextToken();
-                if (!skillIdList.contains(Long.valueOf(skillId))) {
-                    skillResolveRepository.save(SkillResolve.builder()
-                            .skillId(Long.valueOf(skillId))
-                            .memberId(skillDto.getMemberId())
-                            .build());
-                }
+                skillResolveRepository.save(SkillResolve.builder()
+                        .skillId(Long.valueOf(skillId))
+                        .memberId(skillDto.getMemberId())
+                        .isDeleted(false)
+                        .build());
             }
             return true;
         }
@@ -138,7 +175,16 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public MemberDto modify(MemberDto memberDto) {
         Optional<Member> findMember = memberRepository.findById(memberDto.getId());
-        findMember.ifPresent(m -> m.update(memberDto));
+        if (findMember.isPresent()) {
+            Member member = findMember.get();
+            if (!member.getNickname().equals(memberDto.getNickname())) {
+                String newNickname = memberDto.getNickname();
+                List<Project> byProjectManager = projectRepository.findByProjectManager(newNickname);
+                byProjectManager.forEach(project -> project.setProjectManager(newNickname));
+            }
+            member.update(memberDto);
+        }
+        //TODO: 팔로우랑 게시판도 닉네임 바뀌면 다해줘야함.
         return findMember.map(Member::toDto).orElse(null);
     }
 

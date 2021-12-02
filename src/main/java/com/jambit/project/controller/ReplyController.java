@@ -27,12 +27,6 @@ public class ReplyController {
         return new ResponseEntity<>(allPostReplies.size(), HttpStatus.OK);
     }
 
-    @GetMapping("/total/ref/{ref_id}")
-    public ResponseEntity<Integer> countAllRefReplies(@PathVariable("ref_id") Long refId) {
-        List<ReplyDto> allReferenceRepliesList = replyService.findAllReferenceRepliesList(refId);
-        return new ResponseEntity<>(allReferenceRepliesList.size(), HttpStatus.OK);
-    }
-
     @GetMapping("/total/project/{project_id}")
     public ResponseEntity<Integer> countAllProjectReplies(@PathVariable("project_id") Long projectId) {
         List<ReplyDto> allProjectRepliesList = replyService.findAllProjectRepliesList(projectId);
@@ -40,22 +34,14 @@ public class ReplyController {
     }
 
     @GetMapping("/post/{post_id}")
-    public ResponseEntity<Page<ReplyDto>> getAllPostReplies(@PathVariable("post_id") Long postId,
-                                                            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
-                                                                    Pageable pageable) {
-        Page<ReplyDto> findAllReplies = replyService.findAllPostRepliesPage(postId, pageable);
+    public ResponseEntity<List<ReplyDto>> getAllPostReplies(@PathVariable("post_id") Long postId) {
+        List<ReplyDto> findAllReplies = replyService.findAllPostRepliesList(postId);
         if (findAllReplies.isEmpty()) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
         else {
             return new ResponseEntity<>(findAllReplies, HttpStatus.OK);
         }
-    }
-
-    @GetMapping("/ref/{refer_id}")
-    public ResponseEntity<List<ReplyDto>> getAllReferenceReplies(@PathVariable("refer_id") Long refId) {
-        List<ReplyDto> allReferenceRepliesPage = replyService.findAllReferenceRepliesList(refId);
-        return new ResponseEntity<>(allReferenceRepliesPage, HttpStatus.OK);
     }
 
     @GetMapping("/project/{project_id}")

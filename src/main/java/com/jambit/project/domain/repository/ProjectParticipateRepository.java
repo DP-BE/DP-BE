@@ -8,4 +8,5 @@ import java.util.List;
 public interface ProjectParticipateRepository extends JpaRepository<ProjectParticipate, Long> {
     List<ProjectParticipate> findByMemberId(Long memberId);
     List<ProjectParticipate> findByProjectId(Long projectId);
+    List<ProjectParticipate> findByProjectIdAndIsDeletedFalse(Long projectId);
 }

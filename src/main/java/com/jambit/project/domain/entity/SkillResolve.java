@@ -23,4 +23,7 @@ public class SkillResolve {
 
     @Column
     private Long memberId;
+
+    @Column
+    private Boolean isDeleted;
 }

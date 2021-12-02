@@ -10,9 +10,10 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Getter @Setter
 @Builder
-public class Reply extends BaseEntity{
+public class Reply extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reply_id")
     private Long id;
 
@@ -29,9 +30,6 @@ public class Reply extends BaseEntity{
     private Long projectId;
 
     @Column
-    private Long referenceId;
-
-    @Column
     private Boolean isDeleted;
 
     @Column
@@ -41,17 +39,17 @@ public class Reply extends BaseEntity{
     @Column(nullable = false)
     private TargetType targetType;
 
-    public static ReplyDto toDTO(Reply reply){
+    public static ReplyDto toDTO(Reply reply) {
         return ReplyDto.builder()
                 .id(reply.getId())
                 .nickname(reply.getNickname())
                 .content(reply.getContent())
                 .postId(reply.getPostId())
-                .referenceId(reply.getReferenceId())
                 .isDeleted(reply.getIsDeleted())
                 .likesCount(reply.getLikesCount())
                 .targetType(reply.getTargetType())
                 .projectId(reply.getProjectId())
+                .createdDate(reply.getCreatedDate())
                 .build();
     }
 }

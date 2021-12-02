@@ -10,8 +10,5 @@ import java.util.Optional;
 
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
     List<Reply> findAllReplyListByPostId(Long postId);
-    Page<Reply> findAllReplyPageByPostIdAndReferenceIdNull(Long postId, Pageable pageable);
-    List<Reply> findByReferenceId(Long referenceId);
-    Optional<Reply> findByIdAndReferenceId(Long id, Long referenceId);
     List<Reply> findByProjectId(Long projectId);
 }

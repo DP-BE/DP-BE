@@ -20,4 +20,7 @@ public class ProjectParticipate {
 
     @Column
     private Long memberId;
+
+    @Column
+    private Boolean isDeleted;
 }
