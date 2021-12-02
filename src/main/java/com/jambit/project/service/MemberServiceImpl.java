@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +34,20 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public MemberDto findMember(String nickname) {
         Optional<Member> findMember = memberRepository.findByNickname(nickname);
-        return findMember.map(Member::toDto).orElse(null);
+        MemberDto memberDto = findMember.map(Member::toDto).orElse(null);
+        if (memberDto != null) {
+            List<String> newSkillList = new ArrayList<>();
+            StringTokenizer stringTokenizer = new StringTokenizer(memberDto.getSkillSet(), "#");
+            while (stringTokenizer.hasMoreTokens()) {
+                Long skillId = Long.valueOf(stringTokenizer.nextToken());
+                Optional<SkillSet> findSkill = skillSetRepository.findById(skillId);
+                findSkill.ifPresent(f -> {
+                    newSkillList.add(f.getSkillName());
+                });
+            }
+            memberDto.setSkillList(newSkillList);
+        }
+        return memberDto;
     }
 
     @Transactional
@@ -45,7 +59,19 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public Page<MemberDto> getRecommendMember(Pageable pageable) {
         Page<Member> recommendedMember = memberRepository.findAllByOrderByProjectCntDesc(pageable);
-        return recommendedMember.map(Member::toDto);
+        Page<MemberDto> memberDto = recommendedMember.map(Member::toDto);
+        return memberDto.map(m -> {
+            String techStack = m.getSkillSet();
+            StringTokenizer stringTokenizer = new StringTokenizer(techStack, "#");
+            List<String> newSkillList = new ArrayList<>();
+            while (stringTokenizer.hasMoreTokens()) {
+                Long skillId = Long.valueOf(stringTokenizer.nextToken());
+                Optional<SkillSet> findSkill = skillSetRepository.findById(skillId);
+                findSkill.ifPresent(f -> newSkillList.add(f.getSkillName()));
+            }
+            m.setSkillList(newSkillList);
+            return m;
+        });
     }
 
     @Transactional

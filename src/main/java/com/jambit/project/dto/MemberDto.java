@@ -4,6 +4,8 @@ import com.jambit.project.domain.entity.Member;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Builder
 public class MemberDto {
@@ -13,6 +15,8 @@ public class MemberDto {
     private String description;
     private String skillSet;
     private Long projectCnt;
+
+    private List<String> skillList;
 
     public static Member toEntity(MemberDto memberDto){
         return Member.builder()

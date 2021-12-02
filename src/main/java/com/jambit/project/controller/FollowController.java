@@ -27,12 +27,14 @@ public class FollowController {
         return new ResponseEntity<>(followService.countFollowingListByUserId(nickname), HttpStatus.OK);
     }
 
+    //TODO
     @GetMapping("/follower/{nickname}")
     public ResponseEntity<List<FollowDto>> getFollowerList(@PathVariable String nickname) {
         List<FollowDto> followerList = followService.findFollowerListByUserId(nickname);
         return new ResponseEntity<>(followerList, HttpStatus.OK);
     }
 
+    //TODO
     @GetMapping("/following/{nickname}")
     public ResponseEntity<List<FollowDto>> getFollowingList(@PathVariable String nickname){
         List<FollowDto> followingList = followService.findFollowingListByUserId(nickname);

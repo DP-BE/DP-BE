@@ -25,6 +25,7 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    //TODO
     @GetMapping("/{nickname}")
     public ResponseEntity<MemberDto> getMemberWithNickname(@PathVariable("nickname") String nickname) {
         MemberDto findMember = memberService.findMember(nickname);
@@ -36,6 +37,7 @@ public class MemberController {
         }
     }
 
+    //TODO
     @GetMapping("/recommend")
     public ResponseEntity<Page<MemberDto>> getMemberWithRecommend(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<MemberDto> recommendMember = memberService.getRecommendMember(pageable);
