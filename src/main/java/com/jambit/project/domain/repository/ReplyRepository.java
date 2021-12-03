@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
     List<Reply> findAllReplyListByPostId(Long postId);
     List<Reply> findByProjectId(Long projectId);
+    List<Reply> findAllReplyListByNickname(String Nickname);
 }

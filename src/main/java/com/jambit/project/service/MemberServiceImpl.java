@@ -26,6 +26,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final ProjectParticipateRepository participateRepository;
     private final ProjectRepository projectRepository;
+    private final ReplyRepository replyRepository;
     private final SkillResolveRepository skillResolveRepository;
     private final SkillSetRepository skillSetRepository;
     private final JwtTokenProvider jwtTokenProvider;
@@ -181,7 +182,9 @@ public class MemberServiceImpl implements MemberService {
             if (!exNickname.equals(memberDto.getNickname())) {
                 String newNickname = memberDto.getNickname();
                 List<Project> byProjectManager = projectRepository.findByProjectManager(exNickname);
+                List<Reply> byReplyWriter = replyRepository.findAllReplyListByNickname(exNickname);
                 byProjectManager.forEach(project -> project.setProjectManager(newNickname));
+                byReplyWriter.forEach(reply -> reply.setNickname(newNickname));
             }
             member.update(memberDto);
         }
