@@ -177,9 +177,10 @@ public class MemberServiceImpl implements MemberService {
         Optional<Member> findMember = memberRepository.findById(memberDto.getId());
         if (findMember.isPresent()) {
             Member member = findMember.get();
-            if (!member.getNickname().equals(memberDto.getNickname())) {
+            String exNickname = member.getNickname();
+            if (!exNickname.equals(memberDto.getNickname())) {
                 String newNickname = memberDto.getNickname();
-                List<Project> byProjectManager = projectRepository.findByProjectManager(newNickname);
+                List<Project> byProjectManager = projectRepository.findByProjectManager(exNickname);
                 byProjectManager.forEach(project -> project.setProjectManager(newNickname));
             }
             member.update(memberDto);
