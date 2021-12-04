@@ -245,4 +245,12 @@ public class ProjectServiceImpl implements ProjectService{
         });
         return projectDtoList;
     }
+
+    @Transactional
+    public void updateViewCount(Long projectId) {
+        Optional<Project> findProject = projectRepository.findById(projectId);
+        findProject.ifPresent(p -> {
+            projectRepository.incProjectViewCount(p.getId());
+        });
+    }
 }

@@ -27,4 +27,5 @@ public interface ProjectService {
 
     List<SkillSetDto> findProjectSkillSet(Long projectId);
 
+    void updateViewCount(Long projectId);
 }
