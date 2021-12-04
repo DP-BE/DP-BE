@@ -31,6 +31,7 @@ public class MemberServiceImpl implements MemberService {
     private final SkillSetRepository skillSetRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final ImageRepository imageRepository;
+    private final FollowRepository followRepository;
 
     @Transactional
     public MemberDto findMember(String nickname) {
@@ -185,10 +186,14 @@ public class MemberServiceImpl implements MemberService {
                 List<Reply> byReplyWriter = replyRepository.findAllReplyListByNickname(exNickname);
                 byProjectManager.forEach(project -> project.setProjectManager(newNickname));
                 byReplyWriter.forEach(reply -> reply.setNickname(newNickname));
+                List<Follow> followingList = followRepository.findByNickname(exNickname);
+                List<Follow> followerList = followRepository.findByFollowee(exNickname);
+                followingList.forEach(follow -> follow.setNickname(newNickname));
+                followerList.forEach(follow -> follow.setFollowee(newNickname));
+                //TODO: 게시판 바꾸면 닉네임 또 바꿔주기
             }
             member.update(memberDto);
         }
-        //TODO: 팔로우랑 게시판도 닉네임 바뀌면 다해줘야함.
         return findMember.map(Member::toDto).orElse(null);
     }
 

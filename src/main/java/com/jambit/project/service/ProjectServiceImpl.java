@@ -157,7 +157,8 @@ public class ProjectServiceImpl implements ProjectService{
 
     @Transactional
     public Long modifyProject(ProjectDto projectDto){
-        if(projectRepository.findById(projectDto.getId()).isPresent()) {
+        Optional<Project> findProject = projectRepository.findById(projectDto.getId());
+        if(findProject.isPresent()) {
             List<SkillResolve> byProjectId = skillResolveRepository.findByProjectId(projectDto.getId());
             byProjectId.forEach(skill -> {
                 if (!skill.getIsDeleted()) {
@@ -170,7 +171,8 @@ public class ProjectServiceImpl implements ProjectService{
                     member.setIsDeleted(true);
                 }
             });
-            Project project = updateProject(projectDto);
+            Project project = findProject.get();
+            project.update(projectDto);
 
             StringTokenizer stringTokenizer = new StringTokenizer(projectDto.getTechStack(), "#");
             while (stringTokenizer.hasMoreTokens()) {
@@ -192,21 +194,6 @@ public class ProjectServiceImpl implements ProjectService{
             return project.getId();
         }
         return null;
-    }
-
-    private Project updateProject(ProjectDto projectDto){
-        Project project = new Project();
-        project.setId(projectDto.getId());
-        project.setProjectName(projectDto.getProjectName());
-        project.setContent(projectDto.getContent());
-        project.setProjectLink(projectDto.getProjectLink());
-        project.setGithubLink(projectDto.getGithubLink());
-        project.setParticipatedNickname(projectDto.getParticipatedNickname());
-        project.setTechStack(projectDto.getTechStack());
-        project.setLikesCount(projectDto.getLikesCount());
-        project.setReplyCount(projectDto.getReplyCount());
-        project.setViewCount(projectDto.getViewCount());
-        return project;
     }
 
     @Transactional
@@ -244,5 +231,13 @@ public class ProjectServiceImpl implements ProjectService{
             p.setImgList(imageList);
         });
         return projectDtoList;
+    }
+
+    @Transactional
+    public void updateViewCount(Long projectId) {
+        Optional<Project> findProject = projectRepository.findById(projectId);
+        findProject.ifPresent(p -> {
+            projectRepository.incProjectViewCount(p.getId());
+        });
     }
 }

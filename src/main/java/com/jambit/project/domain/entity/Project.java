@@ -70,4 +70,15 @@ public class Project extends BaseEntity{
                 .build();
     }
 
+    public void update(ProjectDto projectDto) {
+        this.content = projectDto.getContent();
+        this.projectName = projectDto.getProjectName();
+        this.githubLink = projectDto.getGithubLink();
+        this.participatedNickname = projectDto.getParticipatedNickname();
+        this.progress = projectDto.getProgress();
+        this.projectManager = projectDto.getProjectManager();
+        this.techStack = projectDto.getTechStack();
+        this.projectLink = projectDto.getProjectLink();
+    }
+
 }
