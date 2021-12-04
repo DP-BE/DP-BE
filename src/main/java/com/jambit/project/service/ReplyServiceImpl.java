@@ -87,16 +87,6 @@ public class ReplyServiceImpl implements ReplyService {
                 return false;
             }
             reply.setIsDeleted(true);
-            switch(reply.getTargetType()) {
-                case POST:
-                    Optional<Board> findPost = boardRepository.findById(reply.getPostId());
-                    findPost.ifPresent(b -> b.setReplyCount(b.getReplyCount() - 1L));
-                    break;
-                case PROJECT:
-                    Optional<Project> findProject = projectRepository.findById(reply.getProjectId());
-                    findProject.ifPresent(p -> p.setReplyCount(p.getReplyCount() - 1L));
-                    break;
-            }
             return true;
         }
         return false;

@@ -20,6 +20,7 @@ public class ReplyDto {
     private TargetType targetType;
     private Long projectId;
     private LocalDateTime createdDate;
+    private LocalDateTime lastModifiedDate;
 
     public static Reply toEntity(ReplyDto replyDto) {
         return Reply.builder()

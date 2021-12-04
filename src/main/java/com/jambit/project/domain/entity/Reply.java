@@ -50,6 +50,7 @@ public class Reply extends BaseEntity {
                 .targetType(reply.getTargetType())
                 .projectId(reply.getProjectId())
                 .createdDate(reply.getCreatedDate())
+                .lastModifiedDate(reply.getLastModifiedDate())
                 .build();
     }
 }
