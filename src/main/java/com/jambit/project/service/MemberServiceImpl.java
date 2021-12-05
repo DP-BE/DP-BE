@@ -2,16 +2,15 @@ package com.jambit.project.service;
 
 import com.jambit.project.domain.entity.*;
 import com.jambit.project.domain.repository.*;
-import com.jambit.project.dto.MemberDto;
-import com.jambit.project.dto.ProjectDto;
-import com.jambit.project.dto.RegisterSkillDto;
-import com.jambit.project.dto.SkillSetDto;
+import com.jambit.project.dto.*;
 import com.jambit.project.security.JwtTokenProvider;
+import com.jambit.project.utility.FileHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +31,7 @@ public class MemberServiceImpl implements MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final ImageRepository imageRepository;
     private final FollowRepository followRepository;
-
+    private final FileHandler fileHandler;
     @Transactional
     public MemberDto findMember(String nickname) {
         Optional<Member> findMember = memberRepository.findByNickname(nickname);
@@ -146,6 +145,7 @@ public class MemberServiceImpl implements MemberService {
             memberRepository.save(member);
             return member.getId();
         }
+
         return null;
     }
 
@@ -168,6 +168,19 @@ public class MemberServiceImpl implements MemberService {
                         .memberId(skillDto.getMemberId())
                         .isDeleted(false)
                         .build());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Transactional
+    public Boolean registerImage(Long memberId, MultipartFile[] files) throws Exception{
+        List<ImageDto> imageList = fileHandler.parseFileInfo(memberId, TargetType.USER, files);
+        if (!imageList.isEmpty()) {
+            for (ImageDto imageDto : imageList) {
+                Image image = ImageDto.toEntity(imageDto);
+                imageRepository.save(image);
             }
             return true;
         }
