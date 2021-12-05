@@ -52,7 +52,6 @@ public class RecommendServiceImpl implements RecommendService {
         Optional<Recommend> findRecommendWrapper = recommendRepository.findById(recommendId);
         if (findRecommendWrapper.isPresent()) {
             if (!findRecommendWrapper.get().getIsDeleted()) {
-                recommendRepository.deleteById(recommendId);
                 switch (findRecommendWrapper.get().getTargetType()) {
                     case POST:
                         Optional<Board> findPost = boardRepository.findById(findRecommendWrapper.get().getRefId());
@@ -67,6 +66,7 @@ public class RecommendServiceImpl implements RecommendService {
                         findProject.ifPresent(p -> p.setLikesCount(p.getLikesCount() - 1L));
                         break;
                 }
+                recommendRepository.deleteById(recommendId);
             }
             return true;
         }

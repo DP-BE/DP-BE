@@ -26,6 +26,7 @@ public class MemberServiceImpl implements MemberService {
     private final ProjectParticipateRepository participateRepository;
     private final ProjectRepository projectRepository;
     private final ReplyRepository replyRepository;
+    private final RecommendRepository recommendRepository;
     private final SkillResolveRepository skillResolveRepository;
     private final SkillSetRepository skillSetRepository;
     private final JwtTokenProvider jwtTokenProvider;
@@ -197,12 +198,14 @@ public class MemberServiceImpl implements MemberService {
                 String newNickname = memberDto.getNickname();
                 List<Project> byProjectManager = projectRepository.findByProjectManager(exNickname);
                 List<Reply> byReplyWriter = replyRepository.findAllReplyListByNickname(exNickname);
-                byProjectManager.forEach(project -> project.setProjectManager(newNickname));
-                byReplyWriter.forEach(reply -> reply.setNickname(newNickname));
                 List<Follow> followingList = followRepository.findByNickname(exNickname);
                 List<Follow> followerList = followRepository.findByFollowee(exNickname);
+                List<Recommend> recommendList = recommendRepository.findByNickname(exNickname);
+                byProjectManager.forEach(project -> project.setProjectManager(newNickname));
+                byReplyWriter.forEach(reply -> reply.setNickname(newNickname));
                 followingList.forEach(follow -> follow.setNickname(newNickname));
                 followerList.forEach(follow -> follow.setFollowee(newNickname));
+                recommendList.forEach(recommend -> recommend.setNickname(newNickname));
                 //TODO: 게시판 바꾸면 닉네임 또 바꿔주기
             }
             member.update(memberDto);

@@ -11,4 +11,5 @@ public interface RecommendRepository extends JpaRepository<Recommend, Long> {
     List<Recommend> findByRefIdAndTargetType(Long refId, TargetType targetType);
     Optional<Recommend> findTop1ByRefIdAndNicknameAndTargetTypeAndIsDeletedFalse(Long refId, String nickname, TargetType targetType);
     List<Recommend> findByTargetTypeAndNickname(TargetType targetType, String nickname);
+    List<Recommend> findByNickname(String nickname);
 }
