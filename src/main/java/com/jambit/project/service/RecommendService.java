@@ -10,5 +10,6 @@ public interface RecommendService {
     Boolean delete(Long recommendId);
     Integer countRecommendByType(Long refId, TargetType targetType);
     Boolean getRecommendByTypeAndUser(Long refId, TargetType targetType, String nickname);
-    List<RecommendDto> findRecommendListByUserId(TargetType targetType, String nickname);
+    //List<RecommendDto> findRecommendListByUserId(TargetType targetType, String nickname);
+    Long findIdByTypeAndUserAndRef(TargetType targetType, String nickname, Long refId);
 }

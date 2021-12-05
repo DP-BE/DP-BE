@@ -83,8 +83,15 @@ public class RecommendServiceImpl implements RecommendService {
         return recommendList.isPresent();
     }
 
-    public List<RecommendDto> findRecommendListByUserId(TargetType targetType, String nickname) {
+    public Long findIdByTypeAndUserAndRef(TargetType targetType, String nickname, Long refId) {
         List<Recommend> recommendList = recommendRepository.findByTargetTypeAndNickname(targetType, nickname);
-        return recommendList.stream().map(Recommend::toDto).collect(Collectors.toList());
+        Long ret = -1L;
+        for(Recommend iter : recommendList) {
+            if (iter.getRefId().equals(refId)) {
+                ret = iter.getId();
+                break;
+            }
+        }
+        return ret;
     }
 }

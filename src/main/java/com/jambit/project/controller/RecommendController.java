@@ -78,10 +78,11 @@ public class RecommendController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<RecommendDto>> getRecommendList(@RequestParam TargetType targetType,
-                                                               @RequestParam String nickname){
-        List<RecommendDto> recommendList = recommendService.findRecommendListByUserId(targetType, nickname);
-        return new ResponseEntity<>(recommendList, HttpStatus.OK);
+    public ResponseEntity<Long> getRecommendList(@RequestParam TargetType targetType,
+                                                               @RequestParam String nickname,
+                                                               @RequestParam Long refId){
+        Long id = recommendService.findIdByTypeAndUserAndRef(targetType, nickname, refId);
+        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
     // 좋아요 등록
