@@ -77,7 +77,7 @@ public class RecommendController {
         return new ResponseEntity<>(isRecommend, HttpStatus.OK);
     }
 
-    @GetMapping("/recommend")
+    @GetMapping("")
     public ResponseEntity<List<RecommendDto>> getRecommendList(@RequestParam TargetType targetType,
                                                                @RequestParam String nickname){
         List<RecommendDto> recommendList = recommendService.findRecommendListByUserId(targetType, nickname);
