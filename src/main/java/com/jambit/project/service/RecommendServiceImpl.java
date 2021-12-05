@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -80,5 +81,10 @@ public class RecommendServiceImpl implements RecommendService {
     public Boolean getRecommendByTypeAndUser(Long refId, TargetType targetType, String nickname) {
         Optional<Recommend> recommendList = recommendRepository.findTop1ByRefIdAndNicknameAndTargetTypeAndIsDeletedFalse(refId, nickname, targetType);
         return recommendList.isPresent();
+    }
+
+    public List<RecommendDto> findRecommendListByUserId(TargetType targetType, String nickname) {
+        List<Recommend> recommendList = recommendRepository.findByTargetTypeAndNickname(targetType, nickname);
+        return recommendList.stream().map(Recommend::toDto).collect(Collectors.toList());
     }
 }

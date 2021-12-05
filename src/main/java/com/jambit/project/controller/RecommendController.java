@@ -1,6 +1,8 @@
 package com.jambit.project.controller;
 
+import com.jambit.project.domain.entity.Recommend;
 import com.jambit.project.domain.entity.TargetType;
+import com.jambit.project.dto.FollowDto;
 import com.jambit.project.dto.RecommendDto;
 import com.jambit.project.service.RecommendService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -71,6 +75,13 @@ public class RecommendController {
     public ResponseEntity<Boolean> getReplyRecommend(@PathVariable("reply_id") Long replyId, @PathVariable("nickname") String nickname) {
         Boolean isRecommend = recommendService.getRecommendByTypeAndUser(replyId, TargetType.REPLY, nickname);
         return new ResponseEntity<>(isRecommend, HttpStatus.OK);
+    }
+
+    @GetMapping("/recommend")
+    public ResponseEntity<List<RecommendDto>> getRecommendList(@RequestParam TargetType targetType,
+                                                               @RequestParam String nickname){
+        List<RecommendDto> recommendList = recommendService.findRecommendListByUserId(targetType, nickname);
+        return new ResponseEntity<>(recommendList, HttpStatus.OK);
     }
 
     // 좋아요 등록
