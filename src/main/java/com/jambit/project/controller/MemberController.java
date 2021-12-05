@@ -14,6 +14,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -110,6 +111,13 @@ public class MemberController {
     @PostMapping("/skill")
     public ResponseEntity<Boolean> registerSkill(@RequestBody RegisterSkillDto skillDto) {
         Boolean isSuccess = memberService.registerSkill(skillDto);
+        return new ResponseEntity<>(isSuccess, HttpStatus.OK);
+    }
+
+    @PostMapping("/image")
+    public ResponseEntity<Boolean> registerImage(@RequestPart(value = "memberId") Long memberId,
+                                                 @RequestPart(value = "image") MultipartFile[] files) throws Exception {
+        Boolean isSuccess = memberService.registerImage(memberId, files);
         return new ResponseEntity<>(isSuccess, HttpStatus.OK);
     }
 
