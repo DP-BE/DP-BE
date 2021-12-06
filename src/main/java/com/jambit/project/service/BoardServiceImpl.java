@@ -8,6 +8,7 @@ import com.jambit.project.utility.FileHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,6 +44,7 @@ public class BoardServiceImpl implements BoardService {
             String nickname = findPost.getNickname();
             Optional<Member> byNickname = memberRepository.findByNickname(nickname);
             byNickname.ifPresent(member -> boardDto.setProfileImage(member.getProfileImage()));
+            boardDto.setSkillList(findPostSkillSet(boardDto.getId()));
             return boardDto;
         }
         return null;
@@ -50,8 +52,14 @@ public class BoardServiceImpl implements BoardService {
 
     @Transactional
     public List<BoardDto> findPostList(String nickname) {
-        List<Board> byNickname = boardRepository.findByNickname(nickname);
-        return byNickname.stream().map(Board::toDto).collect(Collectors.toList());
+        List<BoardDto> postList = boardRepository.findByNickname(nickname).stream().map(Board::toDto).collect(Collectors.toList());
+        postList.forEach(board -> {
+            String name = board.getNickname();
+            Optional<Member> byNickname = memberRepository.findByNickname(name);
+            byNickname.ifPresent(member -> board.setProfileImage(member.getProfileImage()));
+            board.setSkillList(findPostSkillSet(board.getId()));
+        });
+        return postList;
     }
 
     @Transactional
@@ -62,6 +70,9 @@ public class BoardServiceImpl implements BoardService {
             Optional<Board> byId = boardRepository.findById(id);
             byId.ifPresent(post -> {
                 BoardDto boardDto = Board.toDto(post);
+                boardDto.setSkillList(findPostSkillSet(boardDto.getId()));
+                Optional<Member> byNickname = memberRepository.findByNickname(post.getNickname());
+                byNickname.ifPresent(member -> boardDto.setProfileImage(member.getProfileImage()));
                 boardDtoList.add(boardDto);
             });
         });
@@ -152,24 +163,76 @@ public class BoardServiceImpl implements BoardService {
                 String nickname = board.getNickname();
                 Optional<Member> byNickname = memberRepository.findByNickname(nickname);
                 byNickname.ifPresent(member -> board.setProfileImage(member.getProfileImage()));
+                board.setSkillList(findPostSkillSet(board.getId()));
         });
         return findPostList;
     }
 
     @Transactional
-    public List<BoardDto> findPostListByUserNickname(String nickname) {
-        List<Board> findPostsListByUser = boardRepository.findAllBoardListByNickname(nickname);
-        return findPostsListByUser.stream()
-                .map(Board::toDto)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public List<BoardDto> findPostByTitle(String title) {
-        List<Board> targetPostList = boardRepository.findByTitleContaining(title);
-        return targetPostList.stream()
-                .map(Board::toDto)
-                .collect(Collectors.toList());
+    public Page<BoardDto> findFilteredPost(String type, String payload, Pageable pageable) {
+        switch(type) {
+            case "NICKNAME":
+                Page<BoardDto> findBoardByNickname = boardRepository.findPageByNicknameContaining(payload, pageable).map(Board::toDto);
+                findBoardByNickname.forEach(board -> {
+                    String nickname = board.getNickname();
+                    Optional<Member> byNickname = memberRepository.findByNickname(nickname);
+                    byNickname.ifPresent(member -> board.setProfileImage(member.getProfileImage()));
+                    board.setSkillList(findPostSkillSet(board.getId()));
+                });
+                return findBoardByNickname;
+            case "TITLE":
+                Page<BoardDto> boardPage = boardRepository.findPageByTitleContaining(payload, pageable).map(Board::toDto);
+                boardPage.forEach(board -> {
+                    String nickname = board.getNickname();
+                    Optional<Member> byNickname = memberRepository.findByNickname(nickname);
+                    byNickname.ifPresent(member -> board.setProfileImage(member.getProfileImage()));
+                    board.setSkillList(findPostSkillSet(board.getId()));
+                });
+                return boardPage;
+            case "PROGRESS":
+                switch(payload) {
+                    case "ONGOING":
+                        Page<BoardDto> findOngoingPage = boardRepository.findPageByProgressType(ProgressType.ONGOING, pageable).map(Board::toDto);
+                        findOngoingPage.forEach(board -> {
+                            String nickname = board.getNickname();
+                            Optional<Member> byNickname = memberRepository.findByNickname(nickname);
+                            byNickname.ifPresent(member -> board.setProfileImage(member.getProfileImage()));
+                            board.setSkillList(findPostSkillSet(board.getId()));
+                        });
+                        return findOngoingPage;
+                    case "COMPLETE":
+                        Page<BoardDto> findCompletePage = boardRepository.findPageByProgressType(ProgressType.COMPLETE, pageable).map(Board::toDto);
+                        findCompletePage.forEach(board -> {
+                            String nickname = board.getNickname();
+                            Optional<Member> byNickname = memberRepository.findByNickname(nickname);
+                            byNickname.ifPresent(member -> board.setProfileImage(member.getProfileImage()));
+                            board.setSkillList(findPostSkillSet(board.getId()));
+                        });
+                        return findCompletePage;
+                }
+            case "TECH":
+                Optional<SkillSet> findSkill = skillSetRepository.findBySkillName(payload);
+                Long skillId = findSkill.map(SkillSet::getId).orElse(null);
+                if (skillId != null) {
+                    List<SkillResolve> postSkill = skillResolveRepository.findPostSkill(skillId);
+                    List<BoardDto> boardList = new ArrayList<>();
+                    postSkill.forEach(skill -> {
+                        Long postId = skill.getPostId();
+                        Optional<Board> findPost = boardRepository.findById(postId);
+                        findPost.ifPresent(board -> {
+                            boardList.add(Board.toDto(board));
+                        });
+                    });
+                    boardList.forEach(board -> {
+                        String nickname = board.getNickname();
+                        Optional<Member> byNickname = memberRepository.findByNickname(nickname);
+                        byNickname.ifPresent(member -> board.setProfileImage(member.getProfileImage()));
+                        board.setSkillList(findPostSkillSet(board.getId()));
+                    });
+                    return new PageImpl<>(boardList.subList(0, Math.min(pageable.getPageSize(), boardList.size())), pageable, boardList.size());
+                }
+        }
+        return null;
     }
 
 }

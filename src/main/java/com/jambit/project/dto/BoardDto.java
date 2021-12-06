@@ -33,6 +33,7 @@ public class BoardDto {
     private ProgressType progressType;
 
     private List<Object> positionList;
+    private List<String> skillList;
 
     public static Board toEntity(BoardDto boardDto) {
         return Board.builder()
