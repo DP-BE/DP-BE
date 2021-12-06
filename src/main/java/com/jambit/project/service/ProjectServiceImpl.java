@@ -235,7 +235,7 @@ public class ProjectServiceImpl implements ProjectService{
 
     @Transactional
     public List<ProjectDto> findProjectByTitle(String title){
-        List<Project> findProjectList = projectRepository.findAllByTitle(title);
+        List<Project> findProjectList = projectRepository.findAllByProjectName(title);
         return findProjectList.stream().map(Project::toDto).collect(Collectors.toList());
     }
 

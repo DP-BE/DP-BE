@@ -11,7 +11,7 @@ import java.util.List;
 public interface ProjectRepository extends JpaRepository<Project, Long>{
     List<Project> findTop5ByOrderByLikesCountDesc();
     List<Project> findByProjectManager(String nickname);
-    List<Project> findAllByTitle(String title);
+    List<Project> findAllByProjectName(String title);
 
     @Modifying
     @Query("update Project p set p.viewCount = p.viewCount + 1 where p.id = :project_id")
