@@ -90,14 +90,14 @@ public class BoardController {
     }
 
     //닉네임으로 찾기
-    @GetMapping("/{user_nickname}")
-    public ResponseEntity<List<BoardDto>> getUserPost(@PathVariable("user_nickname")String userNickname){
-        List<BoardDto> userPosts = boardService.findPostListByUserNickname(userNickname);
+    @GetMapping("/by_nickname/{nickname}")
+    public ResponseEntity<List<BoardDto>> getUserPost(@PathVariable("nickname")String nickname){
+        List<BoardDto> userPosts = boardService.findPostListByUserNickname(nickname);
         return new ResponseEntity<>(userPosts, HttpStatus.OK);
     }
 
     //제목으로 찾기
-    @GetMapping("/{title}")
+    @GetMapping("/by_title/{title}")
     public ResponseEntity<List<BoardDto>> getPostByTitle(@PathVariable("title")String title){
         List<BoardDto> findPostList = boardService.findPostByTitle(title);
         return new ResponseEntity<>(findPostList, HttpStatus.OK);
