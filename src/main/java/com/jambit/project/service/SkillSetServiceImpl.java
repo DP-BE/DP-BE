@@ -40,7 +40,7 @@ public class SkillSetServiceImpl implements SkillSetService{
 
     @Transactional
     public List<SkillSetDto> findSkillSetWithName(String skillName) {
-        List<SkillSet> bySkillNameContaining = skillSetRepository.findBySkillNameContaining(skillName);
+        List<SkillSet> bySkillNameContaining = skillSetRepository.findBySkillNameContainingIgnoreCase(skillName);
         return bySkillNameContaining.stream().map(SkillSet::toDto).collect(Collectors.toList());
     }
 }

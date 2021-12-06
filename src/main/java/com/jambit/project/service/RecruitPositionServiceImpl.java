@@ -17,7 +17,7 @@ public class RecruitPositionServiceImpl implements RecruitPositionService {
 
     @Transactional
     public List<RecruitPositionDto> getPositionList(Long postId) {
-        List<RecruitPosition> findPositionList = recruitPositionRepository.findByPostId(postId);
+        List<RecruitPosition> findPositionList = recruitPositionRepository.findByPostIdAndIsDeletedFalse(postId);
         return findPositionList.stream()
                 .map(RecruitPosition::toDto)
                 .collect(Collectors.toList());

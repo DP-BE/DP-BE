@@ -9,4 +9,5 @@ public interface ProjectParticipateRepository extends JpaRepository<ProjectParti
     List<ProjectParticipate> findByMemberId(Long memberId);
     List<ProjectParticipate> findByProjectId(Long projectId);
     List<ProjectParticipate> findByProjectIdAndIsDeletedFalse(Long projectId);
+    List<ProjectParticipate> findByMemberIdAndIsDeletedFalse(Long memberId);
 }

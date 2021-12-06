@@ -1,9 +1,6 @@
 package com.jambit.project.controller;
 
-import com.jambit.project.dto.MemberDto;
-import com.jambit.project.dto.ProjectDto;
-import com.jambit.project.dto.RegisterSkillDto;
-import com.jambit.project.dto.SkillSetDto;
+import com.jambit.project.dto.*;
 import com.jambit.project.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -94,6 +91,12 @@ public class MemberController {
         else {
             return new ResponseEntity<>(null ,HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<List<MemberDto>> searchMemberByFilter(@RequestBody SearchDto searchDto) {
+        List<MemberDto> memberList = memberService.searchMemberWithType(searchDto.getType(), searchDto.getPayload());
+        return new ResponseEntity<>(memberList, HttpStatus.OK);
     }
 
     @PostMapping("")

@@ -7,6 +7,7 @@ import com.jambit.project.service.BoardService;
 import com.jambit.project.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -89,17 +90,18 @@ public class BoardController {
         return new ResponseEntity<>(allPosts, HttpStatus.OK);
     }
 
-    //닉네임으로 찾기
-    @GetMapping("/by_nickname/{nickname}")
-    public ResponseEntity<List<BoardDto>> getUserPost(@PathVariable("nickname")String nickname){
-        List<BoardDto> userPosts = boardService.findPostListByUserNickname(nickname);
-        return new ResponseEntity<>(userPosts, HttpStatus.OK);
+    @GetMapping("/filter")
+    public ResponseEntity<Page<BoardDto>> filterPost(@RequestParam("type") String type,
+                                                     @RequestParam("payload") String payload,
+                                                     @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
+                                                             Pageable pageable) {
+        Page<BoardDto> filteredPost = boardService.findFilteredPost(type, payload, pageable);
+        if (filteredPost != null) {
+            return new ResponseEntity<>(filteredPost, HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
     }
 
-    //제목으로 찾기
-    @GetMapping("/by_title/{title}")
-    public ResponseEntity<List<BoardDto>> getPostByTitle(@PathVariable("title")String title){
-        List<BoardDto> findPostList = boardService.findPostByTitle(title);
-        return new ResponseEntity<>(findPostList, HttpStatus.OK);
-    }
 }

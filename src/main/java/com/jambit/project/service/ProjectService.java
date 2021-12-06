@@ -25,7 +25,7 @@ public interface ProjectService {
     // 좋아요 순으로 프로젝트 리스트 5개
     List<ProjectDto> findTopProjects();
 
-    List<ProjectDto> findProjectByTitle(String title);
+    List<ProjectDto> findProjectByFilter(String type, String payload);
 
     List<SkillSetDto> findProjectSkillSet(Long projectId);
 

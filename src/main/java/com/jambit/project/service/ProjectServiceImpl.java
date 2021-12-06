@@ -123,6 +123,7 @@ public class ProjectServiceImpl implements ProjectService{
                 ProjectParticipate participate = ProjectParticipate.builder()
                         .projectId(project.getId())
                         .memberId(Long.valueOf(memberId))
+                        .isDeleted(false)
                         .build();
                 participateRepository.save(participate);
                 memberRepository.incProjectCount(Long.valueOf(memberId));
@@ -180,6 +181,7 @@ public class ProjectServiceImpl implements ProjectService{
                 skillResolveRepository.save(SkillResolve.builder()
                         .skillId(skillId)
                         .projectId(projectDto.getId())
+                        .isDeleted(false)
                         .build());
             }
 
@@ -189,6 +191,7 @@ public class ProjectServiceImpl implements ProjectService{
                 participateRepository.save(ProjectParticipate.builder()
                         .projectId(projectDto.getId())
                         .memberId(memberId)
+                        .isDeleted(false)
                         .build());
             }
             return project.getId();
@@ -234,9 +237,51 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
     @Transactional
-    public List<ProjectDto> findProjectByTitle(String title){
-        List<Project> findProjectList = projectRepository.findAllByProjectNameContaining(title);
-        return findProjectList.stream().map(Project::toDto).collect(Collectors.toList());
+    public List<ProjectDto> findProjectByFilter(String type, String payload) {
+        switch(type) {
+            case "TITLE":
+                List<ProjectDto> findProjectList = projectRepository.findByProjectNameContainingIgnoreCase(payload).stream().map(Project::toDto).collect(Collectors.toList());
+                findProjectList.forEach(p -> {
+                    List<String> imageList = new ArrayList<>();
+                    List<String> fileNameList = imageRepository.findAllImageListByTargetIdAndTargetType(p.getId(), TargetType.PROJECT).stream().map(Image::getFileName).collect(Collectors.toList());
+                    if (!fileNameList.isEmpty()) {
+                        fileNameList.forEach(file -> {
+                            imageList.add("http://15.165.194.66:8080/image/get-image-with-media-type?fileName=" + file);
+                        });
+                    }
+                    else {
+                        imageList.add("/static/media/defaultImg.85ba799a.png");
+                    }
+                    p.setImgList(imageList);
+                });
+                return findProjectList;
+            case "STACK":
+                List<Long> skillIdList = skillSetRepository.findBySkillNameContainingIgnoreCase(payload).stream().map(SkillSet::getId).collect(Collectors.toList());
+                List<Long> projectIdList = skillResolveRepository.findBySkillIdInAndIsDeletedFalseAndMemberIdIsNull(skillIdList).stream().map(SkillResolve::getProjectId).collect(Collectors.toList());
+                Set<Long> projectSet = new HashSet<>(projectIdList);
+                List<Long> uniqueProjectIdList = new ArrayList<>(projectSet);
+                List<ProjectDto> returnList = new ArrayList<>();
+                uniqueProjectIdList.forEach(projectId -> {
+                    Optional<Project> findProject = projectRepository.findById(projectId);
+                    findProject.ifPresent(p -> {
+                        ProjectDto projectDto = Project.toDto(p);
+                        List<String> imageList = new ArrayList<>();
+                        List<String> fileNameList = imageRepository.findAllImageListByTargetIdAndTargetType(p.getId(), TargetType.PROJECT).stream().map(Image::getFileName).collect(Collectors.toList());
+                        if (!fileNameList.isEmpty()) {
+                            fileNameList.forEach(file -> {
+                                imageList.add("http://15.165.194.66:8080/image/get-image-with-media-type?fileName=" + file);
+                            });
+                        }
+                        else {
+                            imageList.add("/static/media/defaultImg.85ba799a.png");
+                        }
+                        projectDto.setImgList(imageList);
+                        returnList.add(projectDto);
+                    });
+                });
+                return returnList;
+        }
+        return new ArrayList<>();
     }
 
     @Transactional

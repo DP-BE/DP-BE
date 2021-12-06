@@ -6,20 +6,19 @@ import com.jambit.project.dto.*;
 import com.jambit.project.security.JwtTokenProvider;
 import com.jambit.project.utility.FileHandler;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final ProjectParticipateRepository participateRepository;
@@ -90,7 +89,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public List<ProjectDto> getMyProjectList(Long memberId) {
         List<ProjectDto> projectList = new ArrayList<>();
-        List<ProjectParticipate> byMemberId = participateRepository.findByMemberId(memberId);
+        List<ProjectParticipate> byMemberId = participateRepository.findByMemberIdAndIsDeletedFalse(memberId);
         List<Long> findProjectIdList = byMemberId.stream().map(ProjectParticipate::getProjectId).collect(Collectors.toList());
         findProjectIdList.forEach(projectId -> {
             Optional<Project> findProject = projectRepository.findById(projectId);
@@ -135,6 +134,36 @@ public class MemberServiceImpl implements MemberService {
             return jwtTokenProvider.createToken(nickname);
         }
         return null;
+    }
+
+    @Transactional
+    public List<MemberDto> searchMemberWithType(String type, String payload) {
+        switch (type) {
+            case "TITLE":
+                return memberRepository.findByNicknameContaining(payload).stream().map(Member::toDto).collect(Collectors.toList());
+            case "STACK":
+                List<Long> skillIdList = skillSetRepository.findBySkillNameContainingIgnoreCase(payload).stream().map(SkillSet::getId).collect(Collectors.toList());
+                List<Long> memberIdList = skillResolveRepository.findBySkillIdInAndIsDeletedFalseAndProjectIdIsNull(skillIdList).stream().map(SkillResolve::getMemberId).collect(Collectors.toList());
+                Set<Long> memberSet = new HashSet<>(memberIdList);
+                List<Long> uniqueMemberIdList = new ArrayList<>(memberSet);
+                return uniqueMemberIdList.stream().map(m -> {
+                    List<String> skillList = new ArrayList<>();
+                    Optional<Member> findMember = memberRepository.findById(m);
+                    if (findMember.isPresent()) {
+                        Member member = findMember.get();
+                        List<Long> memberSkillIdList = skillResolveRepository.findByMemberIdAndIsDeletedFalse(member.getId()).stream().map(SkillResolve::getSkillId).collect(Collectors.toList());
+                        memberSkillIdList.forEach(id -> {
+                            Optional<SkillSet> findSkill = skillSetRepository.findById(id);
+                            findSkill.ifPresent(skill -> skillList.add(skill.getSkillName()));
+                        });
+                        MemberDto memberDto = Member.toDto(member);
+                        memberDto.setSkillList(skillList);
+                        return memberDto;
+                    }
+                    return null;
+                }).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 
     @Transactional
@@ -214,7 +243,6 @@ public class MemberServiceImpl implements MemberService {
                 followerList.forEach(follow -> follow.setFollowee(newNickname));
                 recommendList.forEach(recommend -> recommend.setNickname(newNickname));
                 boardList.forEach(board -> board.setNickname(newNickname));
-                //TODO: 게시판 바꾸면 닉네임 또 바꿔주기
             }
             member.update(memberDto);
         }

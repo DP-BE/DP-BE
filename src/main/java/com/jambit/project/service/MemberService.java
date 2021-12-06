@@ -24,4 +24,5 @@ public interface MemberService {
     MemberDto findMemberByUserId(String userId);
     Page<MemberDto> getRecommendMember(Pageable pageable);
     Boolean checkDuplicateNickname(String nickname);
+    List<MemberDto> searchMemberWithType(String type, String payload);
 }

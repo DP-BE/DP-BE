@@ -3,10 +3,7 @@ package com.jambit.project.controller;
 
 import com.jambit.project.domain.entity.TargetType;
 import com.jambit.project.domain.repository.ProjectRepository;
-import com.jambit.project.dto.BoardDto;
-import com.jambit.project.dto.MemberDto;
-import com.jambit.project.dto.ProjectDto;
-import com.jambit.project.dto.SkillSetDto;
+import com.jambit.project.dto.*;
 import com.jambit.project.service.ImageService;
 import com.jambit.project.service.ProjectService;
 import lombok.RequiredArgsConstructor;
@@ -102,9 +99,9 @@ public class ProjectController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<List<ProjectDto>> getProjectByTitle(@RequestParam("projectName") String title){
-        List<ProjectDto> projectDtoList = projectService.findProjectByTitle(title);
+    @PostMapping("/search")
+    public ResponseEntity<List<ProjectDto>> searchProjectByFilter(@RequestBody SearchDto searchDto){
+        List<ProjectDto> projectDtoList = projectService.findProjectByFilter(searchDto.getType(), searchDto.getPayload());
         return new ResponseEntity<>(projectDtoList, HttpStatus.OK);
     }
 

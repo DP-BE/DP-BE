@@ -1,7 +1,9 @@
 package com.jambit.project.service;
 
 import com.jambit.project.domain.entity.Follow;
+import com.jambit.project.domain.entity.Member;
 import com.jambit.project.domain.repository.FollowRepository;
+import com.jambit.project.domain.repository.MemberRepository;
 import com.jambit.project.dto.FollowDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,20 +18,28 @@ import java.util.stream.Collectors;
 public class FollowServiceImpl implements FollowService {
 
     private final FollowRepository followRepository;
-
+    private final MemberRepository memberRepository;
     /*
     나를 팔로우 하는 사람(Follower)
      */
     @Transactional
     public List<FollowDto> findFollowerListByUserId(String userId) {
-        List<Follow> followList = followRepository.findByFollowee(userId);
-        return followList.stream().map(Follow::toDto).collect(Collectors.toList());
+        List<FollowDto> followList = followRepository.findByFollowee(userId).stream().map(Follow::toDto).collect(Collectors.toList());
+        followList.forEach(follow -> {
+            Optional<Member> findMember = memberRepository.findByNickname(follow.getNickname());
+            findMember.ifPresent(member -> follow.setProfileImage(member.getProfileImage()));
+        });
+        return followList;
     }
 
     @Transactional
     public List<FollowDto> findFollowingListByUserId(String userId) {
-        List<Follow> followList = followRepository.findByNickname(userId);
-        return followList.stream().map(Follow::toDto).collect(Collectors.toList());
+        List<FollowDto> followList = followRepository.findByNickname(userId).stream().map(Follow::toDto).collect(Collectors.toList());
+        followList.forEach(follow -> {
+            Optional<Member> findMember = memberRepository.findByNickname(follow.getFollowee());
+            findMember.ifPresent(member -> follow.setProfileImage(member.getProfileImage()));
+        });
+        return followList;
     }
 
     /*

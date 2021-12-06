@@ -25,12 +25,16 @@ public class RecruitPosition extends  BaseEntity{
     @Column(nullable = false)
     private Long postId;
 
+    @Column
+    private Boolean isDeleted;
+
     public static RecruitPositionDto toDto(RecruitPosition recruitPosition) {
         return RecruitPositionDto.builder()
                 .id(recruitPosition.getId())
                 .position(recruitPosition.getPosition())
                 .count(recruitPosition.getCount())
                 .postId(recruitPosition.getPostId())
+                .isDeleted(recruitPosition.getIsDeleted())
                 .build();
     }
 }

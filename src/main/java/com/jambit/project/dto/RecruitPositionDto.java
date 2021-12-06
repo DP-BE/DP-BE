@@ -15,6 +15,7 @@ public class RecruitPositionDto {
     private String position;
     private Long count;
     private Long postId;
+    private Boolean isDeleted;
 
     public static RecruitPosition toEntity(RecruitPositionDto recruitPositionDto) {
         return RecruitPosition.builder()
@@ -22,6 +23,7 @@ public class RecruitPositionDto {
                 .position(recruitPositionDto.getPosition())
                 .count(recruitPositionDto.getCount())
                 .postId(recruitPositionDto.getPostId())
+                .isDeleted(recruitPositionDto.getIsDeleted())
                 .build();
     }
 }

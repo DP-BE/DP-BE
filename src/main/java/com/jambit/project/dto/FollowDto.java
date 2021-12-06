@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -14,6 +16,8 @@ public class FollowDto {
     private Long id;
     private String followee;
     private String nickname;
+
+    private String profileImage;
 
     public static Follow toEntity(FollowDto followDto){
         return Follow.builder()

@@ -24,7 +24,5 @@ public interface BoardService {
 
     Page<BoardDto> findAllPosts(Pageable pageable);
 
-    List<BoardDto> findPostListByUserNickname(String nickname);
-
-    List<BoardDto> findPostByTitle(String title);
+    Page<BoardDto> findFilteredPost(String type, String payload, Pageable pageable);
 }
