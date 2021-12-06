@@ -102,4 +102,10 @@ public class ProjectController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<List<ProjectDto>> getProjectByTitle(@RequestParam("title") String title){
+        List<ProjectDto> projectDtoList = projectService.findProjectByTitle(title);
+        return new ResponseEntity<>(projectDtoList, HttpStatus.OK);
+    }
+
 }
