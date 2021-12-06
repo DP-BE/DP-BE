@@ -2,11 +2,11 @@ package com.jambit.project.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jambit.project.domain.entity.*;
-import com.jambit.project.domain.repository.BoardRepository;
-import com.jambit.project.domain.repository.ImageRepository;
-import com.jambit.project.domain.repository.RecommendRepository;
+import com.jambit.project.domain.repository.*;
 import com.jambit.project.dto.BoardDto;
 import com.jambit.project.dto.ImageDto;
+import com.jambit.project.dto.RecruitPositionDto;
+import com.jambit.project.dto.SkillSetDto;
 import com.jambit.project.utility.FileHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +19,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 
@@ -31,6 +32,9 @@ public class BoardServiceImpl implements BoardService {
     private final ImageRepository imageRepository;
     private final RecommendRepository recommendRepository;
     private final FileHandler fileHandler;
+    private final SkillResolveRepository skillResolveRepository;
+    private final RecruitPositionRepository recruitPositionRepository;
+    private final SkillSetRepository skillSetRepository;
 
     @Transactional
     public BoardDto findPost(Long post_id) {
@@ -63,6 +67,19 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Transactional
+    public List<String> findPostSkillSet(Long postId) {
+        List<String> skillList = new ArrayList<>();
+        List<Long> skillIdList = skillResolveRepository.findByPostIdAndIsDeletedFalse(postId).stream().map(SkillResolve::getSkillId).collect(Collectors.toList());
+        skillIdList.forEach(skillId -> {
+            Optional<SkillSet> findSkill = skillSetRepository.findById(skillId);
+            findSkill.ifPresent(s -> {
+                skillList.add(s.getSkillName());
+            });
+        });
+        return skillList;
+    }
+
+    @Transactional
     public Long createPost(String boardDto, MultipartFile[] files) throws Exception {
         if (boardDto != null) {
             BoardDto boardDto1 = new ObjectMapper().readValue(boardDto, BoardDto.class);
@@ -72,6 +89,19 @@ public class BoardServiceImpl implements BoardService {
             Board board = BoardDto.toEntity(boardDto1);
 
             boardRepository.save(board);
+
+            StringTokenizer stringTokenizer = new StringTokenizer(boardDto1.getSkillSet(), "#");
+            while (stringTokenizer.hasMoreTokens()) {
+                Long skillId = Long.valueOf(stringTokenizer.nextToken());
+                skillResolveRepository.save(SkillResolve.builder().postId(board.getId()).skillId(skillId).build());
+            }
+
+            List<Object> positionList = boardDto1.getPositionList();
+            for (Object object : positionList) {
+                RecruitPositionDto recruitPositionDto = new ObjectMapper().readValue(object.toString(), RecruitPositionDto.class);
+                recruitPositionDto.setPostId(board.getId());
+                recruitPositionRepository.save(RecruitPositionDto.toEntity(recruitPositionDto));
+            }
 
             List<ImageDto> imageList = fileHandler.parseFileInfo(board.getId(), TargetType.POST, files);
 
@@ -91,9 +121,21 @@ public class BoardServiceImpl implements BoardService {
         Optional<Board> findModifyingBoard = boardRepository.findById(boardDto.getId());
         if (findModifyingBoard.isPresent()) {
             Board findBoard = findModifyingBoard.get();
-            // 수정되는 속성인 content와 title에 대한 수정 로직
             findBoard.update(boardDto);
-            boardRepository.save(findBoard);
+
+            List<SkillResolve> byPostId = skillResolveRepository.findByPostId(boardDto.getId());
+            byPostId.forEach(s -> {
+                if (s.getIsDeleted())
+                    s.setIsDeleted(true);
+            });
+
+            String skillSet = boardDto.getSkillSet();
+            StringTokenizer stringTokenizer = new StringTokenizer(skillSet, "#");
+            while (stringTokenizer.hasMoreTokens()) {
+                Long skillId = Long.valueOf(stringTokenizer.nextToken());
+                skillResolveRepository.save(SkillResolve.builder().skillId(skillId).postId(boardDto.getId()).build());
+            }
+
             return findBoard.getId();
         }
         return null;
@@ -109,7 +151,6 @@ public class BoardServiceImpl implements BoardService {
         return false;
     }
 
-    //TODO: 페이지네이션 -> Spring data JPA를 활용하여
     @Transactional
     public Page<BoardDto> findAllPosts(Pageable pageable) {
         Page<Board> findPostsPage = boardRepository.findAll(pageable);

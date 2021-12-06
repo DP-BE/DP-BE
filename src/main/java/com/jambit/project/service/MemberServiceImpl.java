@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +32,8 @@ public class MemberServiceImpl implements MemberService {
     private final ImageRepository imageRepository;
     private final FollowRepository followRepository;
     private final FileHandler fileHandler;
+    private final BoardRepository boardRepository;
+
     @Transactional
     public MemberDto findMember(String nickname) {
         Optional<Member> findMember = memberRepository.findByNickname(nickname);
@@ -43,9 +44,7 @@ public class MemberServiceImpl implements MemberService {
             while (stringTokenizer.hasMoreTokens()) {
                 Long skillId = Long.valueOf(stringTokenizer.nextToken());
                 Optional<SkillSet> findSkill = skillSetRepository.findById(skillId);
-                findSkill.ifPresent(f -> {
-                    newSkillList.add(f.getSkillName());
-                });
+                findSkill.ifPresent(f -> newSkillList.add(f.getSkillName()));
             }
             memberDto.setSkillList(newSkillList);
         }
@@ -177,13 +176,20 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     public Boolean registerImage(Long memberId, MultipartFile[] files) throws Exception{
+        List<Image> originalList = imageRepository.findAllImageListByTargetIdAndTargetType(memberId, TargetType.USER);
+        imageRepository.deleteAll(originalList);
         List<ImageDto> imageList = fileHandler.parseFileInfo(memberId, TargetType.USER, files);
+        Optional<Member> findMember = memberRepository.findById(memberId);
         if (!imageList.isEmpty()) {
-            for (ImageDto imageDto : imageList) {
-                Image image = ImageDto.toEntity(imageDto);
-                imageRepository.save(image);
+            if (findMember.isPresent()) {
+                for (ImageDto imageDto : imageList) {
+                    Image image = ImageDto.toEntity(imageDto);
+                    Member member = findMember.get();
+                    member.setProfileImage("http://15.165.194.66:8080/image/get-image-with-media-type?fileName=" + image.getFileName());
+                    imageRepository.save(image);
+                }
+                return true;
             }
-            return true;
         }
         return false;
     }
@@ -201,11 +207,13 @@ public class MemberServiceImpl implements MemberService {
                 List<Follow> followingList = followRepository.findByNickname(exNickname);
                 List<Follow> followerList = followRepository.findByFollowee(exNickname);
                 List<Recommend> recommendList = recommendRepository.findByNickname(exNickname);
+                List<Board> boardList = boardRepository.findByNickname(exNickname);
                 byProjectManager.forEach(project -> project.setProjectManager(newNickname));
                 byReplyWriter.forEach(reply -> reply.setNickname(newNickname));
                 followingList.forEach(follow -> follow.setNickname(newNickname));
                 followerList.forEach(follow -> follow.setFollowee(newNickname));
                 recommendList.forEach(recommend -> recommend.setNickname(newNickname));
+                boardList.forEach(board -> board.setNickname(newNickname));
                 //TODO: 게시판 바꾸면 닉네임 또 바꿔주기
             }
             member.update(memberDto);

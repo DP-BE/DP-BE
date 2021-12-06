@@ -10,4 +10,6 @@ public interface SkillResolveRepository extends JpaRepository<SkillResolve, Long
     List<SkillResolve> findByProjectIdAndIsDeletedFalse(Long projectId);
     List<SkillResolve> findByMemberId(Long memberId);
     List<SkillResolve> findByProjectId(Long projectId);
+    List<SkillResolve> findByPostId(Long postId);
+    List<SkillResolve> findByPostIdAndIsDeletedFalse(Long postId);
 }
