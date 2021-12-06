@@ -21,6 +21,8 @@ public class BoardDto {
     private String title;
     private String content;
     private String skillSet;
+    private String profileImage;
+    private String contact;
     private Long projectRefId;
     private Long viewCount;
     private Long replyCount;
@@ -28,10 +30,8 @@ public class BoardDto {
     private LocalDateTime modifiedDate;
     private Long likesCount;
     private Boolean isPublic;
-    private String contact;
     private ProgressType progressType;
 
-    //TODO: RecruitPosition
     private List<Object> positionList;
 
     public static Board toEntity(BoardDto boardDto) {

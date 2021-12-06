@@ -3,10 +3,7 @@ package com.jambit.project.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jambit.project.domain.entity.*;
 import com.jambit.project.domain.repository.*;
-import com.jambit.project.dto.BoardDto;
-import com.jambit.project.dto.ImageDto;
-import com.jambit.project.dto.RecruitPositionDto;
-import com.jambit.project.dto.SkillSetDto;
+import com.jambit.project.dto.*;
 import com.jambit.project.utility.FileHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,13 +32,18 @@ public class BoardServiceImpl implements BoardService {
     private final SkillResolveRepository skillResolveRepository;
     private final RecruitPositionRepository recruitPositionRepository;
     private final SkillSetRepository skillSetRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public BoardDto findPost(Long post_id) {
         Optional<Board> findPostWrapper = boardRepository.findById(post_id);
         if (findPostWrapper.isPresent()) {
             Board findPost = findPostWrapper.get();
-            return Board.toDto(findPost);
+            BoardDto boardDto = Board.toDto(findPost);
+            String nickname = findPost.getNickname();
+            Optional<Member> byNickname = memberRepository.findByNickname(nickname);
+            byNickname.ifPresent(member -> boardDto.setProfileImage(member.getProfileImage()));
+            return boardDto;
         }
         return null;
     }
@@ -145,8 +147,13 @@ public class BoardServiceImpl implements BoardService {
 
     @Transactional
     public Page<BoardDto> findAllPosts(Pageable pageable) {
-        Page<Board> findPostsPage = boardRepository.findAll(pageable);
-        return findPostsPage.map(Board::toDto);
+        Page<BoardDto> findPostList = boardRepository.findAll(pageable).map(Board::toDto);
+        findPostList.forEach(board -> {
+                String nickname = board.getNickname();
+                Optional<Member> byNickname = memberRepository.findByNickname(nickname);
+                byNickname.ifPresent(member -> board.setProfileImage(member.getProfileImage()));
+        });
+        return findPostList;
     }
 
     @Transactional
