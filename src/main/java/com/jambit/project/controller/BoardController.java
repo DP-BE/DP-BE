@@ -49,6 +49,12 @@ public class BoardController {
         return new ResponseEntity<>(likedPostList, HttpStatus.OK);
     }
 
+    @GetMapping("/skill/{post_id}")
+    public ResponseEntity<List<String>> getPostSkill(@PathVariable("post_id") Long postId) {
+        List<String> postSkillSet = boardService.findPostSkillSet(postId);
+        return new ResponseEntity<>(postSkillSet, HttpStatus.OK);
+    }
+
     @PostMapping("")
     public ResponseEntity<Long> registerBoard(@RequestPart(value = "image", required = false) MultipartFile[] files,
                                               @RequestPart(value = "boardDto") String boardDto) throws Exception{

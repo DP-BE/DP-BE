@@ -30,6 +30,9 @@ public class Member extends BaseEntity {
     @Column
     private Long projectCnt;
 
+    @Column
+    private String profileImage;
+
     public static MemberDto toDto(Member member) {
         return MemberDto.builder()
                 .id(member.getId())
@@ -38,6 +41,7 @@ public class Member extends BaseEntity {
                 .description(member.getDescription())
                 .skillSet(member.getSkillSet())
                 .projectCnt(member.getProjectCnt())
+                .profileImage(member.getProfileImage())
                 .build();
     }
 
@@ -46,6 +50,7 @@ public class Member extends BaseEntity {
         this.userId = memberDto.getUserId();
         this.description = memberDto.getDescription();
         this.skillSet = memberDto.getSkillSet();
+        this.profileImage = memberDto.getProfileImage();
     }
 
 }

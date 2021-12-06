@@ -1,9 +1,11 @@
 package com.jambit.project.service;
 
 import com.jambit.project.domain.entity.Board;
+import com.jambit.project.domain.entity.Member;
 import com.jambit.project.domain.entity.Project;
 import com.jambit.project.domain.entity.Reply;
 import com.jambit.project.domain.repository.BoardRepository;
+import com.jambit.project.domain.repository.MemberRepository;
 import com.jambit.project.domain.repository.ProjectRepository;
 import com.jambit.project.domain.repository.ReplyRepository;
 import com.jambit.project.dto.ReplyDto;
@@ -25,21 +27,28 @@ public class ReplyServiceImpl implements ReplyService {
     private final ReplyRepository replyRepository;
     private final BoardRepository boardRepository;
     private final ProjectRepository projectRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public List<ReplyDto> findAllPostRepliesList(Long postId) {
-        List<Reply> findReplyList = replyRepository.findAllReplyListByPostId(postId);
-        return findReplyList.stream()
-                .map(Reply::toDTO)
-                .collect(Collectors.toList());
+        List<ReplyDto> findReplyList = replyRepository.findAllReplyListByPostId(postId).stream().map(Reply::toDTO).collect(Collectors.toList());
+        findReplyList.forEach(reply -> {
+            String nickname = reply.getNickname();
+            Optional<Member> byNickname = memberRepository.findByNickname(nickname);
+            byNickname.ifPresent(member -> reply.setProfileImage(member.getProfileImage()));
+        });
+        return findReplyList;
     }
 
     @Transactional
     public List<ReplyDto> findAllProjectRepliesList(Long projectId) {
-        List<Reply> projectReplyList = replyRepository.findByProjectId(projectId);
-        return projectReplyList.stream()
-                .map(Reply::toDTO)
-                .collect(Collectors.toList());
+        List<ReplyDto> projectReplyList = replyRepository.findByProjectId(projectId).stream().map(Reply::toDTO).collect(Collectors.toList());
+        projectReplyList.forEach(reply -> {
+            String nickname = reply.getNickname();
+            Optional<Member> byNickname = memberRepository.findByNickname(nickname);
+            byNickname.ifPresent(member -> reply.setProfileImage(member.getProfileImage()));
+        });
+        return projectReplyList;
     }
 
     @Transactional

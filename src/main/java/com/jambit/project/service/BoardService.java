@@ -20,6 +20,8 @@ public interface BoardService {
 
     boolean deletePost(Long post_id);
 
+    List<String> findPostSkillSet(Long postId);
+
     Page<BoardDto> findAllPosts(Pageable pageable);
 
     List<BoardDto> findPostListByUserNickname(String nickname);

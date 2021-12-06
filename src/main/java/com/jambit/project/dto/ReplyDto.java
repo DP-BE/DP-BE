@@ -21,6 +21,7 @@ public class ReplyDto {
     private Long projectId;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
+    private String profileImage;
 
     public static Reply toEntity(ReplyDto replyDto) {
         return Reply.builder()

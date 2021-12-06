@@ -25,6 +25,12 @@ public class Board extends BaseEntity{
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private Long projectRefId;
+
+    @Column
+    private String skillSet;
+
     @Column
     private Long viewCount;
 
@@ -37,10 +43,19 @@ public class Board extends BaseEntity{
     @Column
     private Boolean isPublic;
 
+    @Column
+    private String contact;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ProgressType progressType;
+
     public void update(BoardDto boardDto){
         this.title = boardDto.getTitle();
         this.content = boardDto.getContent();
-
+        this.progressType = boardDto.getProgressType();
+        this.content = boardDto.getContent();
+        this.skillSet = boardDto.getSkillSet();
     }
 
     public static BoardDto toDto(Board board) {
@@ -49,11 +64,16 @@ public class Board extends BaseEntity{
                 .nickname(board.getNickname())
                 .title(board.getTitle())
                 .content(board.getContent())
+                .skillSet(board.getSkillSet())
+                .projectRefId(board.getProjectRefId())
+                .contact(board.getContact())
                 .viewCount(board.getViewCount())
                 .replyCount(board.getReplyCount())
                 .createdDate(board.getCreatedDate())
+                .modifiedDate(board.getLastModifiedDate())
                 .likesCount(board.getLikesCount())
                 .isPublic(board.getIsPublic())
+                .progressType(board.getProgressType())
                 .build();
     }
 }

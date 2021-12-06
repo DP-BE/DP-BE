@@ -15,6 +15,7 @@ public class MemberDto {
     private String description;
     private String skillSet;
     private Long projectCnt;
+    private String profileImage;
 
     private List<String> skillList;
 
@@ -26,6 +27,7 @@ public class MemberDto {
                 .description(memberDto.getDescription())
                 .skillSet(memberDto.getSkillSet())
                 .projectCnt(memberDto.getProjectCnt())
+                .profileImage(memberDto.getProfileImage())
                 .build();
     }
 

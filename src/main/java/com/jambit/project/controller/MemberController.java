@@ -115,8 +115,8 @@ public class MemberController {
     }
 
     @PostMapping("/image")
-    public ResponseEntity<Boolean> registerImage(@RequestPart(value = "memberId") Long memberId,
-                                                 @RequestPart(value = "image") MultipartFile[] files) throws Exception {
+    public ResponseEntity<Boolean> registerImage(@RequestParam(value = "memberId") Long memberId,
+                                                 @RequestParam(value = "image") MultipartFile[] files) throws Exception {
         Boolean isSuccess = memberService.registerImage(memberId, files);
         return new ResponseEntity<>(isSuccess, HttpStatus.OK);
     }

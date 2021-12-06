@@ -25,5 +25,8 @@ public class SkillResolve {
     private Long memberId;
 
     @Column
+    private Long postId;
+
+    @Column
     private Boolean isDeleted;
 }
