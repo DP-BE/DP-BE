@@ -234,6 +234,12 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
     @Transactional
+    public List<ProjectDto> findProjectByTitle(String title){
+        List<Project> findProjectList = projectRepository.findAllByTitle(title);
+        return findProjectList.stream().map(Project::toDto).collect(Collectors.toList());
+    }
+
+    @Transactional
     public void updateViewCount(Long projectId) {
         Optional<Project> findProject = projectRepository.findById(projectId);
         findProject.ifPresent(p -> {
