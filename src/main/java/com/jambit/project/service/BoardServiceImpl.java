@@ -80,7 +80,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Transactional
-    public Long createPost(String boardDto, MultipartFile[] files) throws Exception {
+    public Long createPost(String boardDto) throws Exception {
         if (boardDto != null) {
             BoardDto boardDto1 = new ObjectMapper().readValue(boardDto, BoardDto.class);
             boardDto1.setLikesCount(0L);
@@ -103,14 +103,6 @@ public class BoardServiceImpl implements BoardService {
                 recruitPositionRepository.save(RecruitPositionDto.toEntity(recruitPositionDto));
             }
 
-            List<ImageDto> imageList = fileHandler.parseFileInfo(board.getId(), TargetType.POST, files);
-
-            if(!imageList.isEmpty()){
-                for(ImageDto imageDto : imageList){
-                    Image image = ImageDto.toEntity(imageDto);
-                    imageRepository.save(image);
-                }
-            }
             return board.getId();
         }
         return null;

@@ -14,7 +14,7 @@ public interface BoardService {
 
     List<BoardDto> findLikedPostList(String nickname);
 
-    Long createPost(String boardDto, MultipartFile[] files) throws Exception;
+    Long createPost(String boardDto) throws Exception;
 
     Long modifyPost(BoardDto boardDto);
 
