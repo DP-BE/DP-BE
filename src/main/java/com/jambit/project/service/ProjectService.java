@@ -22,8 +22,7 @@ public interface ProjectService {
 
     List<ProjectDto> findLikedProjectList(String nickname);
 
-    // 좋아요 순으로 프로젝트 리스트 5개
-    List<ProjectDto> findTopProjects();
+    Page<ProjectDto> findAllProjects(Pageable pageable);
 
     List<ProjectDto> findProjectByFilter(String type, String payload);
 

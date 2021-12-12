@@ -38,6 +38,7 @@ public class BoardServiceImpl implements BoardService {
         Optional<Board> findPostWrapper = boardRepository.findById(post_id);
         if (findPostWrapper.isPresent()) {
             Board findPost = findPostWrapper.get();
+            findPost.setViewCount(findPost.getViewCount()+1);
             BoardDto boardDto = Board.toDto(findPost);
             String nickname = findPost.getNickname();
             Optional<Member> byNickname = memberRepository.findByNickname(nickname);

@@ -217,9 +217,9 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
     @Transactional
-    public List<ProjectDto> findTopProjects() {
-        List<Project> findProjectList = projectRepository.findTop5ByOrderByLikesCountDesc();
-        List<ProjectDto> projectDtoList = findProjectList.stream().map(Project::toDto).collect(Collectors.toList());
+    public Page<ProjectDto> findAllProjects(Pageable pageable) {
+        Page<Project> findProjectList = projectRepository.findAllByOrderByLikesCountDesc(pageable);
+        Page<ProjectDto> projectDtoList = findProjectList.map(Project::toDto);
         projectDtoList.forEach(p -> {
             List<String> imageList = new ArrayList<>();
             List<String> fileNameList = imageRepository.findAllImageListByTargetIdAndTargetType(p.getId(), TargetType.PROJECT).stream().map(Image::getFileName).collect(Collectors.toList());
