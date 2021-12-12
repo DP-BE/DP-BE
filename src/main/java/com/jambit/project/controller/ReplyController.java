@@ -36,12 +36,7 @@ public class ReplyController {
     @GetMapping("/post/{post_id}")
     public ResponseEntity<List<ReplyDto>> getAllPostReplies(@PathVariable("post_id") Long postId) {
         List<ReplyDto> findAllReplies = replyService.findAllPostRepliesList(postId);
-        if (findAllReplies.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-        else {
-            return new ResponseEntity<>(findAllReplies, HttpStatus.OK);
-        }
+        return new ResponseEntity<>(findAllReplies, HttpStatus.OK);
     }
 
     @GetMapping("/project/{project_id}")

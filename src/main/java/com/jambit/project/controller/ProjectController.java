@@ -93,12 +93,6 @@ public class ProjectController {
         return new ResponseEntity<>(likedProjectList, HttpStatus.OK);
     }
 
-    @GetMapping("/view/{project_id}")
-    public ResponseEntity<Void> incViewCount(@PathVariable("project_id") Long projectId) {
-        projectService.updateViewCount(projectId);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @PostMapping("/search")
     public ResponseEntity<List<ProjectDto>> searchProjectByFilter(@RequestBody SearchDto searchDto){
         List<ProjectDto> projectDtoList = projectService.findProjectByFilter(searchDto.getType(), searchDto.getPayload());

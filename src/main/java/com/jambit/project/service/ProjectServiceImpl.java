@@ -35,6 +35,7 @@ public class ProjectServiceImpl implements ProjectService{
         Optional<Project> findProjectWrapper = projectRepository.findById(project_id);
         if(findProjectWrapper.isPresent()){
             Project findProject = findProjectWrapper.get();
+            findProject.setViewCount(findProject.getViewCount() + 1L);
             ProjectDto projectDto = Project.toDto(findProject);
             List<String> fileNameList = imageRepository.findAllImageListByTargetIdAndTargetType(projectDto.getId(), TargetType.PROJECT).stream().map(Image::getFileName).collect(Collectors.toList());
             List<String> imageList = new ArrayList<>();
@@ -257,7 +258,7 @@ public class ProjectServiceImpl implements ProjectService{
                 return findProjectList;
             case "STACK":
                 List<Long> skillIdList = skillSetRepository.findBySkillNameContainingIgnoreCase(payload).stream().map(SkillSet::getId).collect(Collectors.toList());
-                List<Long> projectIdList = skillResolveRepository.findBySkillIdInAndIsDeletedFalseAndMemberIdIsNull(skillIdList).stream().map(SkillResolve::getProjectId).collect(Collectors.toList());
+                List<Long> projectIdList = skillResolveRepository.findBySkillIdInAndIsDeletedFalseAndMemberIdIsNullAndPostIdIsNull(skillIdList).stream().map(SkillResolve::getProjectId).collect(Collectors.toList());
                 Set<Long> projectSet = new HashSet<>(projectIdList);
                 List<Long> uniqueProjectIdList = new ArrayList<>(projectSet);
                 List<ProjectDto> returnList = new ArrayList<>();

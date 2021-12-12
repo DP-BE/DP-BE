@@ -42,6 +42,12 @@ public class FollowServiceImpl implements FollowService {
         return followList;
     }
 
+    @Transactional
+    public Boolean checkIsFollow(String nickname, String name) {
+        Optional<Follow> findFollow = followRepository.findByNicknameAndFollowee(nickname, name);
+        return findFollow.isPresent();
+    }
+
     /*
     내가 팔로우 하는 사람(Following)
      */

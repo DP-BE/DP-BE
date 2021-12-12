@@ -14,8 +14,8 @@ public interface SkillResolveRepository extends JpaRepository<SkillResolve, Long
     List<SkillResolve> findByProjectId(Long projectId);
     List<SkillResolve> findByPostId(Long postId);
     List<SkillResolve> findByPostIdAndIsDeletedFalse(Long postId);
-    List<SkillResolve> findBySkillIdInAndIsDeletedFalseAndProjectIdIsNull(List<Long> idList);
-    List<SkillResolve> findBySkillIdInAndIsDeletedFalseAndMemberIdIsNull(List<Long> idList);
+    List<SkillResolve> findBySkillIdInAndIsDeletedFalseAndProjectIdIsNullAndPostIdIsNull(List<Long> idList);
+    List<SkillResolve> findBySkillIdInAndIsDeletedFalseAndMemberIdIsNullAndPostIdIsNull(List<Long> idList);
 
     @Query("SELECT s FROM SkillResolve s " +
             "WHERE s.memberId IS NULL " +

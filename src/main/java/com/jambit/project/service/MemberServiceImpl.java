@@ -143,7 +143,7 @@ public class MemberServiceImpl implements MemberService {
                 return memberRepository.findByNicknameContaining(payload).stream().map(Member::toDto).collect(Collectors.toList());
             case "STACK":
                 List<Long> skillIdList = skillSetRepository.findBySkillNameContainingIgnoreCase(payload).stream().map(SkillSet::getId).collect(Collectors.toList());
-                List<Long> memberIdList = skillResolveRepository.findBySkillIdInAndIsDeletedFalseAndProjectIdIsNull(skillIdList).stream().map(SkillResolve::getMemberId).collect(Collectors.toList());
+                List<Long> memberIdList = skillResolveRepository.findBySkillIdInAndIsDeletedFalseAndProjectIdIsNullAndPostIdIsNull(skillIdList).stream().map(SkillResolve::getMemberId).collect(Collectors.toList());
                 Set<Long> memberSet = new HashSet<>(memberIdList);
                 List<Long> uniqueMemberIdList = new ArrayList<>(memberSet);
                 return uniqueMemberIdList.stream().map(m -> {

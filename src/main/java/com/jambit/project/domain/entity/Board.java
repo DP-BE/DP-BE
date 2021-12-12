@@ -56,6 +56,7 @@ public class Board extends BaseEntity{
         this.progressType = boardDto.getProgressType();
         this.content = boardDto.getContent();
         this.skillSet = boardDto.getSkillSet();
+        this.projectRefId = boardDto.getProjectRefId();
     }
 
     public static BoardDto toDto(Board board) {

@@ -17,4 +17,6 @@ public interface FollowService {
     Integer countFollowingListByUserId(String userId);
 
     Integer countFollowerListByUserId(String userId);
+
+    Boolean checkIsFollow(String nickname, String name);
 }

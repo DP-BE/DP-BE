@@ -41,6 +41,12 @@ public class FollowController {
         return new ResponseEntity<>(followingList, HttpStatus.OK);
     }
 
+    @GetMapping("/check")
+    public ResponseEntity<Boolean> checkFollow(@RequestParam("nickname") String nickname, @RequestParam("followee") String followee) {
+        Boolean isFollow = followService.checkIsFollow(nickname, followee);
+        return new ResponseEntity<>(isFollow, HttpStatus.OK);
+    }
+
     @PostMapping("")
     public ResponseEntity<Long> register(@RequestBody FollowDto followDto) {
         Long registerId = followService.create(followDto);
